@@ -4,7 +4,9 @@
   "description": "The central software which orchestrates all the hardware nodes and provides an API for the client access.",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "nodemon --exec babel-node src/index.js",
+    "build": "babel src -d build"
   },
   "repository": {
     "type": "git",
@@ -19,5 +21,16 @@
   "bugs": {
     "url": "https://github.com/KEECO-HomeAutomation/keeco-hub/issues"
   },
-  "homepage": "https://github.com/KEECO-HomeAutomation/keeco-hub#readme"
+  "homepage": "https://github.com/KEECO-HomeAutomation/keeco-hub#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "babel-plugin-import-graphql": "^2.6.2",
+    "nodemon": "^1.18.9"
+  },
+  "dependencies": {
+    "graphql": "^14.1.1"
+  }
 }
