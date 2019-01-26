@@ -5,6 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "test": "jest",
+    "lint": "eslint src/**/*.js",
+    "format": "prettier --write src/**/*.js",
     "start": "nodemon --exec babel-node src/index.js",
     "build": "babel src -d build"
   },
@@ -28,7 +30,11 @@
     "@babel/node": "^7.2.2",
     "@babel/preset-env": "^7.3.1",
     "babel-plugin-import-graphql": "^2.6.2",
-    "nodemon": "^1.18.9"
+    "eslint": "^5.12.1",
+    "eslint-config-prettier": "^4.0.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "nodemon": "^1.18.9",
+    "prettier": "^1.16.1"
   },
   "dependencies": {
     "graphql": "^14.1.1"
