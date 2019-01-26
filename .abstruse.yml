@@ -10,8 +10,6 @@ install:
   - npm ci
 script:
   - npm run $SCRIPT
-cache:
-  - node_modules
 deploy:
   - npm run build
   - tar -czvf dist.tar.gz -C build .
