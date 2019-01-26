@@ -4,13 +4,13 @@ branches:
   - dev
 matrix:
   - env: SCRIPT=lint
-  - env: SCRIPT=test
   - env: SCRIPT=test:coverage
 install:
   - npm ci
 script:
   - npm run $SCRIPT
 deploy:
+  - npm ci
   - npm run build
   - tar -czvf dist.tar.gz -C build .
   - /home/abstruse/deploy.sh "KeecoHub-$ABSTRUSE_BRANCH" "KeecoHub" dist.tar.gz
