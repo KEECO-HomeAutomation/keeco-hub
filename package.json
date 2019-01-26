@@ -1,0 +1,23 @@
+{
+  "name": "keeco-hub",
+  "version": "0.1.0",
+  "description": "The central software which orchestrates all the hardware nodes and provides an API for the client access.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KEECO-HomeAutomation/keeco-hub.git"
+  },
+  "keywords": [
+    "home",
+    "automation"
+  ],
+  "author": "KEECO",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/KEECO-HomeAutomation/keeco-hub/issues"
+  },
+  "homepage": "https://github.com/KEECO-HomeAutomation/keeco-hub#readme"
+}
