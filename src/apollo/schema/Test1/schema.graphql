@@ -1,0 +1,9 @@
+extend type Query {
+	hello: String,
+	users: [User!]
+}
+
+type User {
+	name: String,
+	age: Int
+}
