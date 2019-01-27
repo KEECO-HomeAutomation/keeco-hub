@@ -5,20 +5,12 @@ import { makeExecutableSchema } from 'graphql-tools';
 import Query_types from './Query/schema.graphql';
 import Query_resolvers from './Query/resolvers';
 
-//import Test1
-import Test1_types from './Test1/schema.graphql';
-import Test1_resolvers from './Test1/resolvers';
+//import Users
+import Users_types from './Users/schema.graphql';
+import Users_resolvers from './Users/resolvers';
 
-//import Test1
-import Test2_types from './Test2/schema.graphql';
-import Test2_resolvers from './Test2/resolvers';
-
-export const typeDefs = [Query_types, Test1_types, Test2_types];
-export const resolvers = merge(
-	Query_resolvers,
-	Test1_resolvers,
-	Test2_resolvers
-);
+export const typeDefs = [Query_types, Users_types];
+export const resolvers = merge(Query_resolvers, Users_resolvers);
 
 const schema = makeExecutableSchema({
 	typeDefs,

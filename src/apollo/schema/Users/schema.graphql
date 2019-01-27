@@ -1,0 +1,15 @@
+extend type Query {
+	users: [User!]!
+	getUser(id: ID): User!
+}
+
+type User {
+	id: ID!
+	username: String!
+	sessions: [Session!]!
+}
+
+type Session {
+	issued: String!
+	invalidated: Boolean!
+}
