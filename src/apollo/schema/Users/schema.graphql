@@ -1,15 +1,34 @@
 extend type Query {
 	users: [User!]!
-	getUser(id: ID): User!
+	getUser(id: ID!): User!
+}
+
+extend type Mutation {
+	createUser(input: CreateUserInput!): User!
+	updateUser(id: ID!, input: UpdateUserInput!): User!
+	deleteUser(id: ID!): DeleteUserPayload!
 }
 
 type User {
 	id: ID!
 	username: String!
-	sessions: [Session!]!
+	sessions: [Session!]
 }
 
 type Session {
 	issued: String!
 	invalidated: Boolean!
+}
+
+input CreateUserInput {
+	username: String!
+	password: String!
+}
+
+input UpdateUserInput {
+	password: String
+}
+
+type DeleteUserPayload {
+	id: ID!
 }

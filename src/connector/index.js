@@ -4,6 +4,9 @@ import Logout from './logout';
 import GetUsers from './getUsers';
 import GetUser from './getUser';
 import GetSessions from './getSessions';
+import CreateUser from './createUser';
+import UpdateUser from './updateUser';
+import DeleteUser from './deleteUser';
 
 class Connector {
 	init(options, callback) {
@@ -35,6 +38,18 @@ class Connector {
 
 	getSessions(uid) {
 		return GetSessions(this, uid);
+	}
+
+	createUser(options) {
+		return CreateUser(this, options);
+	}
+
+	updateUser(id, options) {
+		return UpdateUser(this, id, options);
+	}
+
+	deleteUser(id) {
+		return DeleteUser(this, id);
 	}
 }
 

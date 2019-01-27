@@ -42,6 +42,9 @@ class Db {
 						});
 					}
 
+					//turn on foreign keys
+					this.db.exec('PRAGMA foreign_keys=ON');
+
 					callback();
 				}
 			}

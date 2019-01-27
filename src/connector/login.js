@@ -25,6 +25,8 @@ const login = (conn, username, password) => {
 								}
 							}
 						);
+					} else {
+						resolve(null);
 					}
 				} else {
 					resolve(null);
