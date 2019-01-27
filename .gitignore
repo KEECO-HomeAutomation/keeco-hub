@@ -3,3 +3,4 @@ build
 coverage
 *.sublime-project
 *.sublime-workspace
+*.sqlite

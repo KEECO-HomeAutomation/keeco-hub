@@ -26,7 +26,7 @@ describe('log', () => {
 					tag = chalk.bgYellow('WARN');
 					break;
 				default:
-					tag = chalk.bgWhite('INFO');
+					tag = chalk.bgWhite.black('INFO');
 			}
 			expect(console.log).toBeCalledWith(
 				chalk.bgCyan('domain') + chalk.bold(' -> ') + tag + ' ' + 'message'

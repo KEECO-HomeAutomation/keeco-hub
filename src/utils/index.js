@@ -13,7 +13,7 @@ export const log = (domain, message, type = 'info') => {
 			tag = chalk.bgYellow('WARN');
 			break;
 		default:
-			tag = chalk.bgWhite('INFO');
+			tag = chalk.bgWhite.black('INFO');
 	}
 
 	console.log(chalk.bgCyan(domain) + chalk.bold(' -> ') + tag + ' ' + message);
