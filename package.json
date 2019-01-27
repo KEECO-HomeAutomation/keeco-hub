@@ -45,7 +45,9 @@
     "graphql": "^14.1.1",
     "graphql-tools": "^4.0.4",
     "lodash": "^4.17.11",
+    "password-hash": "^1.2.2",
     "path": "^0.12.7",
+    "rand-token": "^0.4.0",
     "sqlite3": "^4.0.6"
   }
 }

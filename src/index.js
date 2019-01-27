@@ -1,6 +1,7 @@
 import gqlServer from './apollo';
 import mqttServer from './aedes';
-import db, { initDB } from './sqlite';
+import db from './sqlite';
+import connector from './connector';
 
 import { log } from './utils';
 
@@ -14,6 +15,17 @@ mqttServer.listen(1883, () => {
 	log('Aedes', 'MQTT server started at port 1883', 'message');
 });
 
-initDB('database.sqlite', () => {
+db.init('database.sqlite', () => {
 	log('SQLite', 'Database successfully opened', 'message');
 });
+
+connector.init(
+	{
+		db: db,
+		mqtt: mqttServer,
+		gql: gqlServer
+	},
+	() => {
+		log('Connector', 'Connector successfully set up', 'message');
+	}
+);
