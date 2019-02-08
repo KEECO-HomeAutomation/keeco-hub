@@ -9,8 +9,16 @@ import Query_resolvers from './Query/resolvers';
 import Users_types from './Users/schema.graphql';
 import Users_resolvers from './Users/resolvers';
 
-export const typeDefs = [Query_types, Users_types];
-export const resolvers = merge(Query_resolvers, Users_resolvers);
+//import Nodes
+import Nodes_types from './Nodes/schema.graphql';
+import Nodes_resolvers from './Nodes/resolvers';
+
+export const typeDefs = [Query_types, Users_types, Nodes_types];
+export const resolvers = merge(
+	Query_resolvers,
+	Users_resolvers,
+	Nodes_resolvers
+);
 
 const schema = makeExecutableSchema({
 	typeDefs,

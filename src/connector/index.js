@@ -1,12 +1,12 @@
-import Authenticate from './authenticate';
-import Login from './login';
-import Logout from './logout';
-import GetUsers from './getUsers';
-import GetUser from './getUser';
-import GetSessions from './getSessions';
-import CreateUser from './createUser';
-import UpdateUser from './updateUser';
-import DeleteUser from './deleteUser';
+import Authenticate from './root/authenticate';
+import Login from './root/login';
+import Logout from './root/logout';
+import GetUsers from './users/getUsers';
+import GetUser from './users/getUser';
+import GetSessions from './users/getSessions';
+import CreateUser from './users/createUser';
+import UpdateUser from './users/updateUser';
+import DeleteUser from './users/deleteUser';
 
 class Connector {
 	init(options, callback) {

@@ -1,0 +1,35 @@
+#import "./TemplateData.graphql"
+
+extend type Query {
+	nodes: [Node!]
+	getNode(id: ID!): Node
+}
+
+type Node {
+	id: ID!
+	uuid: String!
+	name: String
+	endpoints: [Endpoint!]
+	templates: [Template!]
+}
+
+type Endpoint {
+	id: ID!
+	name: String!
+	output: Boolean!
+	range: String
+	value: Float!
+}
+
+type Template {
+	id: ID!
+	name: String!
+	data: TemplateData!
+	mappings: [Mapping!]!
+}
+
+type Mapping {
+	id: ID!
+	name: String!
+	endpoint: Endpoint!
+}

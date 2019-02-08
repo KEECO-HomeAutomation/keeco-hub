@@ -1,0 +1,20 @@
+type TemplateDataSwitch {
+	id: ID!
+	on: Boolean!
+}
+
+type TemplateDataLamp {
+	id: ID!
+	on: Boolean!
+	r: Int
+	g: Int
+	b: Int
+	dim: Int
+}
+
+type TemplateDataThermostat {
+	id: ID!
+	temperature: Float!
+}
+
+union TemplateData = TemplateDataSwitch | TemplateDataLamp | TemplateDataThermostat

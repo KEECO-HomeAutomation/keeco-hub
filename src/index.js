@@ -1,5 +1,5 @@
 import gqlServer from './apollo';
-import mqttServer from './aedes';
+import mqttServer, { aedes, store } from './aedes';
 import db from './sqlite';
 import connector from './connector';
 
@@ -22,7 +22,7 @@ db.init('database.sqlite', () => {
 connector.init(
 	{
 		db: db,
-		mqtt: mqttServer,
+		mqtt: { aedes, store },
 		gql: gqlServer
 	},
 	() => {

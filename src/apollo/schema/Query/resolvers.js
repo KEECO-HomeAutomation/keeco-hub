@@ -19,9 +19,9 @@ const resolvers = {
 		logout: (parent, args, ctx) => {
 			if (!ctx.user) {
 				throw new AuthenticationError();
-			} else {
-				return ctx.connector.logout(ctx.user.token);
 			}
+
+			return ctx.connector.logout(ctx.user.token);
 		}
 	}
 };

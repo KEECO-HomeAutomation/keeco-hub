@@ -18,3 +18,11 @@ export const log = (domain, message, type = 'info') => {
 
 	console.log(chalk.bgCyan(domain) + chalk.bold(' -> ') + tag + ' ' + message);
 };
+
+export const isDev = () => {
+	if (!process.env.NODE_ENV) {
+		return true;
+	} else {
+		return process.env.NODE_ENV === 'development';
+	}
+};
