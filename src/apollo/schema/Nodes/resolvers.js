@@ -54,13 +54,22 @@ const resolvers = {
 			return ctx.connector.getTemplateMappings(parent.id);
 		}
 	},
+	TemplateData: {
+		__resolveType: (parent, args, ctx) => {
+			return (
+				'TemplateData' +
+				parent.name.charAt(0).toUpperCase +
+				parent.name.slice(1)
+			);
+		}
+	},
 	Mapping: {
 		endpoint: (parent, args, ctx) => {
 			if (!ctx.user) {
 				throw new AuthenticationError();
 			}
 
-			return ctx.connector.getEndpoint(parent.id);
+			return ctx.connector.getEndpointForMapping(parent.id);
 		}
 	}
 };

@@ -1,8 +1,8 @@
-const getTemplates = (conn, node) => {
+const getTemplates = (conn, nodeID) => {
 	return new Promise((resolve, reject) => {
 		conn.db.all(
 			'SELECT id, name FROM node_templates WHERE node=$node',
-			{ $node: node },
+			{ $node: nodeID },
 			(err, rows) => {
 				if (err) {
 					reject(err);

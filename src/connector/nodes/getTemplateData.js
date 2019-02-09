@@ -15,25 +15,25 @@ const getTemplateData = (conn, templateID, templateName) => {
 };
 
 const getValues = (conn, node, templateID, templateName) => {
-	switch (template) {
+	switch (templateName) {
 		case 'switch':
 			return {
 				id: node + '_data',
-				on: store.get(getMapping(conn, node, templateID, 'on'))
+				on: conn.mqtt.store.get(getMapping(conn, node, templateID, 'on'))
 			};
 		case 'lamp':
 			return {
 				id: node + '_data',
-				on: store.get(getMapping(conn, node, templateID, 'on')),
-				r: store.get(getMapping(conn, node, templateID, 'r')),
-				g: store.get(getMapping(conn, node, templateID, 'g')),
-				b: store.get(getMapping(conn, node, templateID, 'b')),
-				dim: store.get(getMapping(conn, node, templateID, 'dim'))
+				on: conn.mqtt.store.get(getMapping(conn, node, templateID, 'on')),
+				r: conn.mqtt.store.get(getMapping(conn, node, templateID, 'r')),
+				g: conn.mqtt.store.get(getMapping(conn, node, templateID, 'g')),
+				b: conn.mqtt.store.get(getMapping(conn, node, templateID, 'b')),
+				dim: conn.mqtt.store.get(getMapping(conn, node, templateID, 'dim'))
 			};
 		case 'thermostat':
 			return {
 				id: node + '_data',
-				temperature: store.get(
+				temperature: conn.mqtt.store.get(
 					getMapping(conn, node, templateID, 'temperature')
 				)
 			};
