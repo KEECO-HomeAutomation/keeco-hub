@@ -1,11 +1,25 @@
 import connector from '../connector';
 import provision from './provision';
-import { log } from '../utils';
+import { log, isDev } from '../utils';
 
 const authenticate = (client, username, password, callback) => {
+	//if no username is set, automatically fail
+	if (!username) {
+		log('Aedes', 'Connection with no username set', 'warning');
+		let error = new Error('No username set');
+		error.returnCode = 4;
+		callback(error, null);
+		return;
+	}
+
 	//if username is development and password is development, then log user in without provision
-	if (username === 'development' && password === 'development') {
+	if (isDev() && username == 'development' && password == 'development') {
 		log('Aedes', 'MQTT development user attached');
+
+		//attach uuid to client
+		client.uuid = 'development';
+
+		//call callback
 		callback(null, true);
 		return;
 	}
@@ -37,12 +51,17 @@ const authenticate = (client, username, password, callback) => {
 
 	//provision client
 	provision(connector, parsed).then(
-		isNew => {
+		({ isNew, uuid }) => {
 			if (isNew) {
 				log('Aedes', 'New node provisioned');
 			} else {
 				log('Aedes', 'Node connected');
 			}
+
+			//attach uuid to client
+			client.uuid = uuid;
+
+			//call callback
 			callback(null, true);
 			return;
 		},

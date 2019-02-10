@@ -55,11 +55,14 @@ const resolvers = {
 		}
 	},
 	TemplateData: {
-		__resolveType: (parent, args, ctx) => {
+		__resolveType: parent => {
 			return (
 				'TemplateData' +
-				parent.name.charAt(0).toUpperCase +
-				parent.name.slice(1)
+				parent.id
+					.split('_')[2]
+					.charAt(0)
+					.toUpperCase() +
+				parent.id.split('_')[2].slice(1)
 			);
 		}
 	},

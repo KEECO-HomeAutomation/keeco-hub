@@ -55,7 +55,7 @@ const resolvers = {
 			if (!ctx.user) {
 				throw new AuthenticationError();
 			}
-			
+
 			if (ctx.user.uid == args.id) {
 				throw new ApolloError('You can not delete yourself', 'GENERIC');
 			} else {

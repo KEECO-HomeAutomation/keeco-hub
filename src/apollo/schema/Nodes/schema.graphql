@@ -18,7 +18,7 @@ type Endpoint {
 	name: String!
 	output: Boolean!
 	range: String
-	value: Float!
+	value: Float
 }
 
 type Template {

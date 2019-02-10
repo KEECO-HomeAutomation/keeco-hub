@@ -3,9 +3,13 @@ import path from 'path';
 import SQLite from 'sqlite3';
 import chalk from 'chalk';
 
-import { log } from '../utils';
+import { log, isDev } from '../utils';
 
 import populate from './populate';
+
+if (isDev()) {
+	SQLite.verbose();
+}
 
 class Db {
 	//initialize database

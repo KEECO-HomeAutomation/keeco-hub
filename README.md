@@ -91,7 +91,10 @@ Provision JSON fields:
 - _name_ : The node can name itself. This can be changed later by the user. _Optional_
 - _endpoints_ : Array of endpoints
 	- _name_ : The name of the pin. Should be unique per node
-	- _output_ : Set to true if the pin is an output pin
+	- _output_ : Set to true if the pin is an output pin. _Optional. If omitted defaults to false_
 	- _range_ : The node can define what values is it accepting/will it produce. Examples: 0:15, .002:.4, 1,2,3. [See more](https://www.npmjs.com/package/number-ranger). _Optional_
-- _templates_ : Array of templates. The templates are which tell the server how to work with a node
+- _templates_ : Array of templates. The templates are which tell the server how to work with a node. _Required, but can be an empty array_
 	- _name_ : Name of the template. Should match one of the names listed in _src/apollo/schema/nodes/TemplateData.graphql_. For example the template name for TemplateDataSwitch should be switch. __Case sensitive__
+	- _mappings_ : Mappings for the template
+		- _name_ : The name of the pin that should be present for the selected template. __Case sensitive__
+		- _endpoint_ : The name of the endpoint that is mapped to the template pin

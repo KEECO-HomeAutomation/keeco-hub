@@ -1,11 +1,11 @@
 type TemplateDataSwitch {
 	id: ID!
-	on: Boolean!
+	on: Boolean
 }
 
 type TemplateDataLamp {
 	id: ID!
-	on: Boolean!
+	on: Boolean
 	r: Int
 	g: Int
 	b: Int
@@ -14,7 +14,7 @@ type TemplateDataLamp {
 
 type TemplateDataThermostat {
 	id: ID!
-	temperature: Float!
+	temperature: Float
 }
 
 union TemplateData = TemplateDataSwitch | TemplateDataLamp | TemplateDataThermostat
