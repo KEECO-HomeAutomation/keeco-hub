@@ -12,14 +12,18 @@ const getEndpointForMapping = (conn, mappingID) => {
 				if (err) {
 					reject(err);
 				} else {
-					resolve({
-						id: row.id,
-						name: row.name,
-						output: row.output,
-						range: row.range,
-						value: conn.mqtt.store.get('nodes/' + row.uuid + '/' + row.name)
-							.value
-					});
+					if (row) {
+						resolve({
+							id: row.id,
+							name: row.name,
+							output: row.output === 1,
+							range: row.range,
+							value: conn.mqtt.store.get('nodes/' + row.uuid + '/' + row.name)
+								.value
+						});
+					} else {
+						resolve(null);
+					}
 				}
 			}
 		);
