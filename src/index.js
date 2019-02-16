@@ -2,6 +2,7 @@ import gqlServer from './apollo';
 import mqttServer, { aedes, store } from './aedes';
 import db from './sqlite';
 import connector from './connector';
+import mdns from './mdns';
 
 import { log } from './utils';
 
@@ -29,3 +30,7 @@ connector.init(
 		log('Connector', 'Connector successfully set up', 'message');
 	}
 );
+
+mdns.init(() => {
+	log('MDNS', 'MDNS started answering', 'message');
+});
