@@ -11,7 +11,7 @@ type LoginPayload {
 	token: String!
 }
 input LoginInput {
-	username: String!,
+	username: String!
 	password: String!
 }
 
