@@ -24,42 +24,43 @@ const getTemplateData = (conn, templateID, templateName) => {
 };
 
 const getValues = async (conn, node, templateID, templateName) => {
+	var mappings = {};
 	switch (templateName) {
 		case 'switch':
 			try {
-				var onMapping = await getMapping(conn, node, templateID, 'on');
+				mappings.on = await getMapping(conn, node, templateID, 'on');
 			} catch (e) {
 				throw e;
 			}
 
 			return {
 				id: node + '_' + templateID + '_' + templateName + '_data',
-				on: conn.mqtt.store.get(onMapping).value > 0 ? true : false
+				on: conn.mqtt.store.get(mappings.on).value > 0 ? true : false
 			};
 
 		case 'lamp':
 			try {
-				var onMapping = await getMapping(conn, node, templateID, 'on');
-				var rMapping = await getMapping(conn, node, templateID, 'r');
-				var gMapping = await getMapping(conn, node, templateID, 'g');
-				var bMapping = await getMapping(conn, node, templateID, 'b');
-				var dimMapping = await getMapping(conn, node, templateID, 'dim');
+				mappings.on = await getMapping(conn, node, templateID, 'on');
+				mappings.r = await getMapping(conn, node, templateID, 'r');
+				mappings.g = await getMapping(conn, node, templateID, 'g');
+				mappings.b = await getMapping(conn, node, templateID, 'b');
+				mappings.dim = await getMapping(conn, node, templateID, 'dim');
 			} catch (e) {
 				throw e;
 			}
 
 			return {
 				id: node + '_' + templateID + '_' + templateName + '_data',
-				on: conn.mqtt.store.get(onMapping).value > 0 ? true : false,
-				r: conn.mqtt.store.get(rMapping).value,
-				g: conn.mqtt.store.get(gMapping).value,
-				b: conn.mqtt.store.get(bMapping).value,
-				dim: conn.mqtt.store.get(dimMapping).value
+				on: conn.mqtt.store.get(mappings.on).value > 0 ? true : false,
+				r: conn.mqtt.store.get(mappings.r).value,
+				g: conn.mqtt.store.get(mappings.g).value,
+				b: conn.mqtt.store.get(mappings.b).value,
+				dim: conn.mqtt.store.get(mappings.dim).value
 			};
 
 		case 'thermostat':
 			try {
-				var temperatureMapping = await getMapping(
+				mappings.temperature = await getMapping(
 					conn,
 					node,
 					templateID,
@@ -71,7 +72,7 @@ const getValues = async (conn, node, templateID, templateName) => {
 
 			return {
 				id: node + '_' + templateID + '_' + templateName + '_data',
-				temperature: conn.mqtt.store.get(temperatureMapping).value
+				temperature: conn.mqtt.store.get(mappings.temperature).value
 			};
 
 		default:

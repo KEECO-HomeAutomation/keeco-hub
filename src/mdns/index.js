@@ -10,23 +10,6 @@ class Mdns {
 				type: 'A',
 				ttl: 300,
 				data: InternalIP.v4.sync()
-			},
-			//the responses below are not working
-			{
-				name: '_mqtt._tcp.hub.keeco.local',
-				type: 'SRV',
-				data: {
-					port: 1883,
-					target: 'hub.keeco.local'
-				}
-			},
-			{
-				name: '_graphql._tcp.hub.keeco.local',
-				type: 'SRV',
-				data: {
-					port: 5000,
-					target: 'hub.keeco.local'
-				}
 			}
 		];
 	}
@@ -34,7 +17,7 @@ class Mdns {
 	init(callback) {
 		this.mdns = new MulticastDNS();
 
-		this.mdns.on('query', (query, ri) => {
+		this.mdns.on('query', query => {
 			log(
 				'MDNS',
 				'Received query with question: ' +
