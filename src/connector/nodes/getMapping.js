@@ -7,10 +7,9 @@ const getMapping = (conn, nodeUUID, templateID, name) => {
 				if (err) {
 					reject(err);
 				} else {
-					if(!row){
+					if (!row) {
 						resolve(null);
-					}
-					else{
+					} else {
 						resolve('nodes/' + nodeUUID + '/' + row.name);
 					}
 				}

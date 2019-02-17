@@ -17,6 +17,7 @@ import GetTemplateMappings from './nodes/getTemplateMappings';
 import GetEndpointForMapping from './nodes/getEndpointForMapping';
 import GetNodesByTemplate from './nodes/getNodesByTemplate';
 import UpdateNode from './nodes/updateNode';
+import UpdateTemplateData from './nodes/updateTemplateData';
 
 class Connector {
 	init(options, callback) {
@@ -109,6 +110,10 @@ class Connector {
 
 	updateNode(nodeID, options) {
 		return UpdateNode(this, nodeID, options);
+	}
+
+	updateTemplateData(templateID, options) {
+		return UpdateTemplateData(this, templateID, options);
 	}
 }
 

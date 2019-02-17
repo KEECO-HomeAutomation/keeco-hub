@@ -1,6 +1,3 @@
-import * as yup from 'yup';
-import { getMapping } from './getTemplateData';
-
 const updateTemplateData = (conn, templateID, options) => {
 	return new Promise((resolve, reject) => {
 		conn.db.get(
@@ -50,3 +47,5 @@ const updateMQTT = async (conn, nodeUUID, templateID, options) => {
 
 	await updateForMapping(0);
 };
+
+export default updateTemplateData;
