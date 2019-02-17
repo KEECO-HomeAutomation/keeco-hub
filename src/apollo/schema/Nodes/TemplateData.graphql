@@ -21,3 +21,11 @@ union TemplateData =
 	  TemplateDataSwitch
 	| TemplateDataLamp
 	| TemplateDataThermostat
+
+input UpdateTemplateDataInput {
+	on: Boolean
+	r: Int
+	g: Int
+	b: Int
+	dim: Int
+}

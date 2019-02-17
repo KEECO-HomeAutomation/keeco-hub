@@ -28,7 +28,7 @@ const getValues = async (conn, node, templateID, templateName) => {
 	switch (templateName) {
 		case 'switch':
 			try {
-				mappings.on = await getMapping(conn, node, templateID, 'on');
+				mappings.on = await conn.getMapping(node, templateID, 'on');
 			} catch (e) {
 				throw e;
 			}
@@ -40,11 +40,11 @@ const getValues = async (conn, node, templateID, templateName) => {
 
 		case 'lamp':
 			try {
-				mappings.on = await getMapping(conn, node, templateID, 'on');
-				mappings.r = await getMapping(conn, node, templateID, 'r');
-				mappings.g = await getMapping(conn, node, templateID, 'g');
-				mappings.b = await getMapping(conn, node, templateID, 'b');
-				mappings.dim = await getMapping(conn, node, templateID, 'dim');
+				mappings.on = await conn.getMapping(node, templateID, 'on');
+				mappings.r = await conn.getMapping(node, templateID, 'r');
+				mappings.g = await conn.getMapping(node, templateID, 'g');
+				mappings.b = await conn.getMapping(node, templateID, 'b');
+				mappings.dim = await conn.getMapping(node, templateID, 'dim');
 			} catch (e) {
 				throw e;
 			}
@@ -60,8 +60,7 @@ const getValues = async (conn, node, templateID, templateName) => {
 
 		case 'thermostat':
 			try {
-				mappings.temperature = await getMapping(
-					conn,
+				mappings.temperature = await conn.getMapping(
 					node,
 					templateID,
 					'temperature'
@@ -78,22 +77,6 @@ const getValues = async (conn, node, templateID, templateName) => {
 		default:
 			return null;
 	}
-};
-
-const getMapping = (conn, node, templateID, name) => {
-	return new Promise((resolve, reject) => {
-		conn.db.get(
-			'SELECT ne.name FROM node_template_mappings AS ntm INNER JOIN node_endpoints AS ne ON (ne.id=ntm.endpoint) WHERE ntm.node_template=$template and ntm.name=$name',
-			{ $template: templateID, $name: name },
-			(err, row) => {
-				if (err) {
-					reject(err);
-				} else {
-					resolve('nodes/' + node + '/' + row.name);
-				}
-			}
-		);
-	});
 };
 
 export default getTemplateData;
