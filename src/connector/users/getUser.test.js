@@ -1,5 +1,5 @@
 import SQLite from 'sqlite3';
-import populate from '../sqlite/populate';
+import populate from '../../sqlite/populate';
 
 import GetUser from './getUser';
 

@@ -4,7 +4,7 @@
   "description": "The central software which orchestrates all the hardware nodes and provides an API for the client access.",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --watch",
     "test:coverage": "jest --collectCoverage",
     "lint": "eslint src/**/*.js",
     "format": "prettier --write src/**/*.js",
@@ -44,10 +44,14 @@
     "chalk": "^2.4.2",
     "graphql": "^14.1.1",
     "graphql-tools": "^4.0.4",
+    "internal-ip": "^4.0.0",
     "lodash": "^4.17.11",
+    "mqtt-store": "^2.1.0",
+    "multicast-dns": "^7.2.0",
     "password-hash": "^1.2.2",
     "path": "^0.12.7",
     "rand-token": "^0.4.0",
-    "sqlite3": "^4.0.6"
+    "sqlite3": "^4.0.6",
+    "yup": "^0.26.10"
   }
 }

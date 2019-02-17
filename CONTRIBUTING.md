@@ -19,8 +19,11 @@ Your code __MUST__ be formatted respecting these styles. You can use IDE extensi
 ## Branches
 
 The _master_ and _dev_ branches are protected.
+
 The _master_ branch contains the well tested code that is ready to be released. Each release is tagged.
+
 The _dev_ branch is used for development.
+
 Each feature must have it's own branch prefixed with __feature/__ (for eample: feature/userMutations). When the work is finished you have to file a Pull Request which will be reviewed by one of the code owners. During the review the reviewer __MUST__ check the results of the CI tests and the compliance of naming conventions. After merging the feature branch it will be removed from the origin repository.
 
 
@@ -28,7 +31,9 @@ Each feature must have it's own branch prefixed with __feature/__ (for eample: f
 ## Testing
 
 You should write tests for every unit. Every feature of the unit should be covered by tests. You can check your test coverage by running `npm run test:coverage`.
+
 We are using [jest](https://jestjs.io/) for testing.
+
 The tests files should be placed near the tested filed with the _.test.js_ extension (for example: _epicFeature.js_ should have a test file called _epicFeature.test.js_).
 
 
@@ -36,7 +41,8 @@ The tests files should be placed near the tested filed with the _.test.js_ exten
 ## Tools
 
 During development you can test the GraphQL server using the included playground that can be found at _http://localhost:5000_. Or you can use [GraphiQL](https://electronjs.org/apps/graphiql). The endpoint is _http://localhost:5000/graphql_.
-You can test MQTT functionality with [MQTT.fx](https://mqttfx.jensd.de/). The default settings should work there.
+
+You can test MQTT functionality with [MQTT.fx](https://mqttfx.jensd.de/). The username and password should be set to _development_, since the MQTT server defaults to provision new nodes when they try to authenticate.
 
 
 

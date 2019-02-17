@@ -1,12 +1,19 @@
-import Authenticate from './authenticate';
-import Login from './login';
-import Logout from './logout';
-import GetUsers from './getUsers';
-import GetUser from './getUser';
-import GetSessions from './getSessions';
-import CreateUser from './createUser';
-import UpdateUser from './updateUser';
-import DeleteUser from './deleteUser';
+import Authenticate from './root/authenticate';
+import Login from './root/login';
+import Logout from './root/logout';
+import GetUsers from './users/getUsers';
+import GetUser from './users/getUser';
+import GetSessions from './users/getSessions';
+import CreateUser from './users/createUser';
+import UpdateUser from './users/updateUser';
+import DeleteUser from './users/deleteUser';
+import GetNodes from './nodes/getNodes';
+import GetNode from './nodes/getNode';
+import GetEndpoints from './nodes/getEndpoints';
+import GetTemplates from './nodes/getTemplates';
+import GetTemplateData from './nodes/getTemplateData';
+import GetTemplateMappings from './nodes/getTemplateMappings';
+import GetEndpointForMapping from './nodes/getEndpointForMapping';
 
 class Connector {
 	init(options, callback) {
@@ -16,6 +23,9 @@ class Connector {
 		callback();
 	}
 
+	/*
+	 * root
+	 */
 	authenticate(token) {
 		return Authenticate(this, token);
 	}
@@ -28,6 +38,9 @@ class Connector {
 		return Logout(this, token);
 	}
 
+	/*
+	 * users
+	 */
 	getUsers() {
 		return GetUsers(this);
 	}
@@ -50,6 +63,37 @@ class Connector {
 
 	deleteUser(id) {
 		return DeleteUser(this, id);
+	}
+
+	/*
+	 * nodes
+	 */
+	getNodes() {
+		return GetNodes(this);
+	}
+
+	getNode(id) {
+		return GetNode(this, id);
+	}
+
+	getEndpoints(nodeID, nodeUUID) {
+		return GetEndpoints(this, nodeID, nodeUUID);
+	}
+
+	getTemplates(nodeID) {
+		return GetTemplates(this, nodeID);
+	}
+
+	getTemplateData(templateID, templateName) {
+		return GetTemplateData(this, templateID, templateName);
+	}
+
+	getTemplateMappings(templateID) {
+		return GetTemplateMappings(this, templateID);
+	}
+
+	getEndpointForMapping(mappingID) {
+		return GetEndpointForMapping(this, mappingID);
 	}
 }
 

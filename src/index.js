@@ -1,7 +1,8 @@
 import gqlServer from './apollo';
-import mqttServer from './aedes';
+import mqttServer, { aedes, store } from './aedes';
 import db from './sqlite';
 import connector from './connector';
+import mdns from './mdns';
 
 import { log } from './utils';
 
@@ -22,10 +23,14 @@ db.init('database.sqlite', () => {
 connector.init(
 	{
 		db: db,
-		mqtt: mqttServer,
+		mqtt: { aedes, store },
 		gql: gqlServer
 	},
 	() => {
 		log('Connector', 'Connector successfully set up', 'message');
 	}
 );
+
+mdns.init(() => {
+	log('MDNS', 'MDNS started answering', 'message');
+});
