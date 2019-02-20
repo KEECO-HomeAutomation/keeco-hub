@@ -42,6 +42,7 @@
     "aedes": "^0.36.0",
     "apollo-server": "^2.3.2",
     "chalk": "^2.4.2",
+    "dnssd": "^0.4.1",
     "graphql": "^14.1.1",
     "graphql-tools": "^4.0.4",
     "internal-ip": "^4.0.0",
@@ -52,6 +53,7 @@
     "path": "^0.12.7",
     "rand-token": "^0.4.0",
     "sqlite3": "^4.0.6",
+    "uuid": "^3.3.2",
     "yup": "^0.26.10"
   }
 }
