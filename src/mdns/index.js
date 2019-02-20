@@ -1,5 +1,4 @@
 import dnssd from 'dnssd';
-import InternalIP from 'internal-ip';
 import { log } from '../utils';
 import uuidv1 from 'uuid/v1';
 
