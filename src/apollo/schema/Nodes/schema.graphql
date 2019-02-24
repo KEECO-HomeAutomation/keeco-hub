@@ -9,7 +9,7 @@ extend type Query {
 
 extend type Mutation {
 	updateNode(id: ID!, input: UpdateNodeInput!): Node
-	updateTemplateData(id: ID!, input: UpdateTemplateDataInput): Template
+	updateTemplateData(id: ID!, input: UpdateTemplateDataInput!): Template
 }
 
 type Node {

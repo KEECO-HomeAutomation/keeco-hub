@@ -48,12 +48,15 @@ const resolvers = {
 
 			return ctx.connector.updateNode(args.id, args.input);
 		},
-		updateTemplateData: (parent, args, ctx) => {
+		updateTemplateData: async (parent, args, ctx) => {
 			if (!ctx.user) {
 				throw new AuthenticationError();
 			}
 
-			return ctx.connector.updateTemplateData(args.id, args.input);
+			let update = await ctx.connector.updateTemplateData(args.id, args.input);
+			if (update) {
+				return update;
+			}
 		}
 	},
 	Node: {

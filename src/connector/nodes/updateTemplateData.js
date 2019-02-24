@@ -1,3 +1,6 @@
+import ranger from 'number-ranger';
+import { UserInputError } from 'apollo-server';
+
 const updateTemplateData = (conn, templateID, options) => {
 	return new Promise((resolve, reject) => {
 		conn.db.get(
@@ -10,12 +13,17 @@ const updateTemplateData = (conn, templateID, options) => {
 					if (!row) {
 						resolve(null);
 					} else {
-						updateMQTT(conn, row.uuid, templateID, options).then(() => {
-							resolve({
-								id: row.id,
-								name: row.name
-							});
-						});
+						updateMQTT(conn, row.uuid, templateID, options).then(
+							() => {
+								resolve({
+									id: row.id,
+									name: row.name
+								});
+							},
+							err => {
+								reject(new UserInputError(err.message));
+							}
+						);
 					}
 				}
 			}
@@ -23,29 +31,78 @@ const updateTemplateData = (conn, templateID, options) => {
 	});
 };
 
-const updateMQTT = async (conn, nodeUUID, templateID, options) => {
+const updateMQTT = (conn, nodeUUID, templateID, options) => {
 	var mappings = Object.keys(options);
 
-	const updateForMapping = async i => {
-		let mapping = await conn.getMapping(nodeUUID, templateID, mappings[i]);
-		if (mapping) {
-			conn.mqtt.aedes.publish(
-				{
-					topic: mapping,
-					payload: options[mappings[i]]
-				},
-				() => {
-					if (i + 1 < mappings.length) {
-						updateForMapping(i + 1);
+	return new Promise((resolve, reject) => {
+		const updateForMapping = i => {
+			//get bounds
+			conn.db.get(
+				`SELECT ne.range, ne.output FROM node_template_mappings AS ntm INNER JOIN node_endpoints AS ne ON (ne.id=ntm.endpoint) 
+				WHERE ntm.node_template=$templateID and ntm.name=$templateName`,
+				{ $templateID: templateID, $templateName: mappings[i] },
+				(err, row) => {
+					if (err) {
+						reject(err);
 					} else {
-						return true;
+						if (row) {
+							if (row.output) {
+								//convert value to numeric
+								let value = +options[mappings[i]];
+								//check if value is in range
+								if (row.range === null || ranger.isInRange(value, row.range)) {
+									//get mapping
+									conn
+										.getMapping(nodeUUID, templateID, mappings[i])
+										.then(mapping => {
+											if (mapping) {
+												conn.mqtt.aedes.publish(
+													{
+														topic: mapping,
+														payload: value.toString()
+													},
+													() => {
+														if (i + 1 < mappings.length) {
+															updateForMapping(i + 1);
+														} else {
+															resolve();
+														}
+													}
+												);
+											} else {
+												reject({ message: 'No mapping for: ' + mappings[i] });
+											}
+										});
+								} else {
+									reject({
+										message:
+											'Value ' +
+											value +
+											' not in range (' +
+											row.range +
+											') for ' +
+											mappings[i]
+									});
+								}
+							} else {
+								reject({
+									message:
+										'Pin for mapping (' + mappings[i] + ') not an output pin'
+								});
+							}
+						} else {
+							reject({
+								message:
+									'Endpoint ' + mappings[i] + ' not available for template'
+							});
+						}
 					}
 				}
 			);
-		}
-	};
+		};
 
-	await updateForMapping(0);
+		updateForMapping(0);
+	});
 };
 
 export default updateTemplateData;

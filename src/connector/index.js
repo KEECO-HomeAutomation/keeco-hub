@@ -89,7 +89,7 @@ class Connector {
 	}
 
 	getMapping(nodeUUID, templateID, name) {
-		return GetMapping(nodeUUID, templateID, name);
+		return GetMapping(this, nodeUUID, templateID, name);
 	}
 
 	getTemplateData(templateID, templateName) {
