@@ -45,7 +45,7 @@ const structure = `
 		FOREIGN KEY (endpoint) REFERENCES node_endpoints(id) ON DELETE CASCADE
 	);
 
-	/* add default admin account */
+	/* add default admin account. Credintials: admin-admin */
 	INSERT INTO users (username, password) VALUES ('admin', 'sha1$a3fea30e$1$0b601805f023f82ad83177ba748c18ed87812856');
 `;
 

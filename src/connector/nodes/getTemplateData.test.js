@@ -110,27 +110,6 @@ describe('Get template data from real database', () => {
 	});
 
 	describe('Test output types', () => {
-		const conn = {
-			db,
-			mqtt,
-			getMapping: jest.fn((nodeUUID, templateID, name) => {
-				let map = '';
-				switch (templateID) {
-					case 1:
-						//switch
-						map = 'ep_1_switch_' + name;
-						break;
-					case 2:
-						//lamp
-						map = 'ep_1_lamp_' + name;
-						break;
-					case 3:
-						//thermostat
-						map = 'ep_1_thermostat_' + name;
-				}
-				return Promise.resolve('nodes/' + nodeUUID + '/' + map);
-			})
-		};
 		tests.forEach(testCase => {
 			test(
 				'Template ID=' +
@@ -139,6 +118,27 @@ describe('Get template data from real database', () => {
 					testCase.input.name +
 					' type',
 				done => {
+					const conn = {
+						db,
+						mqtt,
+						getMapping: jest.fn((nodeUUID, templateID, name) => {
+							let map = '';
+							switch (templateID) {
+								case 1:
+									//switch
+									map = 'ep_1_switch_' + name;
+									break;
+								case 2:
+									//lamp
+									map = 'ep_1_lamp_' + name;
+									break;
+								case 3:
+									//thermostat
+									map = 'ep_1_thermostat_' + name;
+							}
+							return Promise.resolve('nodes/' + nodeUUID + '/' + map);
+						})
+					};
 					GetTemplateData(conn, testCase.input.id, testCase.input.name).then(
 						resp => {
 							expect(resp).toEqual(testCase.expect);
@@ -157,10 +157,10 @@ describe('Get template data from real database', () => {
 describe('Get template data from always-failing database', () => {
 	test('db.get will fail', () => {
 		const db = {
-			get: jest.fn((sql, props, cb) => cb('DB Error at 1st get'))
+			get: jest.fn((sql, props, cb) => cb('DB Error at get'))
 		};
 		expect(GetTemplateData({ db }, 1, 'switch')).rejects.toBe(
-			'DB Error at 1st get'
+			'DB Error at get'
 		);
 	});
 });
