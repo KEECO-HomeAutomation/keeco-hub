@@ -1,5 +1,4 @@
 import SQLite from 'sqlite3';
-import MQTTStore from 'mqtt-store';
 import { UserInputError } from 'apollo-server';
 import populate from '../../sqlite/populate';
 
