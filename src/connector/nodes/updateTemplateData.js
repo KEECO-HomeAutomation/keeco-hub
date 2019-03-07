@@ -21,7 +21,11 @@ const updateTemplateData = (conn, templateID, options) => {
 								});
 							},
 							err => {
-								reject(new UserInputError(err.message));
+								if (err.db) {
+									reject(err.db);
+								} else {
+									reject(new UserInputError(err.message));
+								}
 							}
 						);
 					}
@@ -43,7 +47,7 @@ const updateMQTT = (conn, nodeUUID, templateID, options) => {
 				{ $templateID: templateID, $templateName: mappings[i] },
 				(err, row) => {
 					if (err) {
-						reject(err);
+						reject({ db: err });
 					} else {
 						if (row) {
 							if (row.output) {
@@ -55,23 +59,19 @@ const updateMQTT = (conn, nodeUUID, templateID, options) => {
 									conn
 										.getMapping(nodeUUID, templateID, mappings[i])
 										.then(mapping => {
-											if (mapping) {
-												conn.mqtt.aedes.publish(
-													{
-														topic: mapping,
-														payload: value.toString()
-													},
-													() => {
-														if (i + 1 < mappings.length) {
-															updateForMapping(i + 1);
-														} else {
-															resolve();
-														}
+											conn.mqtt.aedes.publish(
+												{
+													topic: mapping,
+													payload: value.toString()
+												},
+												() => {
+													if (i + 1 < mappings.length) {
+														updateForMapping(i + 1);
+													} else {
+														resolve();
 													}
-												);
-											} else {
-												reject({ message: 'No mapping for: ' + mappings[i] });
-											}
+												}
+											);
 										});
 								} else {
 									reject({
@@ -87,7 +87,7 @@ const updateMQTT = (conn, nodeUUID, templateID, options) => {
 							} else {
 								reject({
 									message:
-										'Pin for mapping (' + mappings[i] + ') not an output pin'
+										'Pin for mapping ' + mappings[i] + ' not an output pin'
 								});
 							}
 						} else {

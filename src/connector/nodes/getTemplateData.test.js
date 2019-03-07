@@ -142,7 +142,7 @@ describe('Get template data from real database', () => {
 					GetTemplateData(conn, testCase.input.id, testCase.input.name).then(
 						resp => {
 							expect(resp).toEqual(testCase.expect);
-							expect(conn.getMapping.mock.calls.length).toBe(
+							expect(conn.getMapping).toBeCalledTimes(
 								Object.keys(testCase.expect).length - 1
 							);
 							done();

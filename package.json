@@ -4,8 +4,8 @@
   "description": "The central software which orchestrates all the hardware nodes and provides an API for the client access.",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest --watch",
-    "test:coverage": "jest --collectCoverage",
+    "test": "jest --watchAll",
+    "test:coverage": "jest --collectCoverage --verbose",
     "lint": "eslint src/**/*.js",
     "format": "prettier --write src/**/*.js src/**/*.graphql",
     "start": "nodemon --exec babel-node src/index.js",
