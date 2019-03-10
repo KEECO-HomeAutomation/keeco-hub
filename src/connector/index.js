@@ -11,9 +11,13 @@ import GetNodes from './nodes/getNodes';
 import GetNode from './nodes/getNode';
 import GetEndpoints from './nodes/getEndpoints';
 import GetTemplates from './nodes/getTemplates';
+import GetMapping from './nodes/getMapping';
 import GetTemplateData from './nodes/getTemplateData';
 import GetTemplateMappings from './nodes/getTemplateMappings';
 import GetEndpointForMapping from './nodes/getEndpointForMapping';
+import GetNodesByTemplate from './nodes/getNodesByTemplate';
+import UpdateNode from './nodes/updateNode';
+import UpdateTemplateData from './nodes/updateTemplateData';
 
 class Connector {
 	init(options, callback) {
@@ -84,6 +88,10 @@ class Connector {
 		return GetTemplates(this, nodeID);
 	}
 
+	getMapping(nodeUUID, templateID, name) {
+		return GetMapping(this, nodeUUID, templateID, name);
+	}
+
 	getTemplateData(templateID, templateName) {
 		return GetTemplateData(this, templateID, templateName);
 	}
@@ -94,6 +102,18 @@ class Connector {
 
 	getEndpointForMapping(mappingID) {
 		return GetEndpointForMapping(this, mappingID);
+	}
+
+	getNodesByTemplate(templateName) {
+		return GetNodesByTemplate(this, templateName);
+	}
+
+	updateNode(nodeID, options) {
+		return UpdateNode(this, nodeID, options);
+	}
+
+	updateTemplateData(templateID, options) {
+		return UpdateTemplateData(this, templateID, options);
 	}
 }
 

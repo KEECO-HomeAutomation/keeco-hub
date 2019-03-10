@@ -3,6 +3,13 @@
 extend type Query {
 	nodes: [Node!]
 	getNode(id: ID!): Node
+	getNodesByTemplate(template: String!): [Node!]
+	getMapping(nodeUUID: ID!, templateID: ID!, mapping: String!): Mapping
+}
+
+extend type Mutation {
+	updateNode(id: ID!, input: UpdateNodeInput!): Node
+	updateTemplateData(id: ID!, input: UpdateTemplateDataInput!): Template
 }
 
 type Node {
@@ -32,4 +39,8 @@ type Mapping {
 	id: ID!
 	name: String!
 	endpoint: Endpoint!
+}
+
+input UpdateNodeInput {
+	name: String
 }

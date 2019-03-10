@@ -20,6 +20,43 @@ const resolvers = {
 			} else {
 				return node;
 			}
+		},
+		getMapping: (parent, args, ctx) => {
+			if (!ctx.user) {
+				throw new AuthenticationError();
+			}
+
+			return ctx.connector.getMapping(
+				args.nodeUUID,
+				args.templateID,
+				args.mapping
+			);
+		},
+		getNodesByTemplate: (parent, args, ctx) => {
+			if (!ctx.user) {
+				throw new AuthenticationError();
+			}
+
+			return ctx.connector.getNodesByTemplate(args.template);
+		}
+	},
+	Mutation: {
+		updateNode: (parent, args, ctx) => {
+			if (!ctx.user) {
+				throw new AuthenticationError();
+			}
+
+			return ctx.connector.updateNode(args.id, args.input);
+		},
+		updateTemplateData: async (parent, args, ctx) => {
+			if (!ctx.user) {
+				throw new AuthenticationError();
+			}
+
+			let update = await ctx.connector.updateTemplateData(args.id, args.input);
+			if (update) {
+				return update;
+			}
 		}
 	},
 	Node: {

@@ -32,7 +32,14 @@ describe('Update user in real db', () => {
 	}, 10000);
 
 	test('Update password for user 1', done => {
-		UpdateUser({ db }, 1, { password: 'newPassword' }).then(res => {
+		const conn = {
+			db,
+			getUser: jest
+				.fn()
+				.mockReturnValue(Promise.resolve({ id: 1, username: 'admin' }))
+		};
+		UpdateUser(conn, 1, { password: 'newPassword' }).then(res => {
+			expect(conn.getUser).toBeCalledWith(1);
 			expect(res).toEqual({ id: 1, username: 'admin' });
 			db.get('SELECT password FROM users WHERE id=1', undefined, (err, row) => {
 				expect(PasswordHash.verify('newPassword', row.password)).toBe(true);
@@ -42,7 +49,12 @@ describe('Update user in real db', () => {
 	});
 
 	test('Update password for a random (non existing) user should not change any other user', done => {
-		UpdateUser({ db }, 500, { password: 'newPassword' }).then(res => {
+		const conn = {
+			db,
+			getUser: jest.fn().mockReturnValue(undefined)
+		};
+		UpdateUser(conn, 500, { password: 'newPassword' }).then(res => {
+			expect(conn.getUser).toBeCalledWith(500);
 			expect(res).toEqual(undefined);
 			db.get('SELECT password FROM users WHERE id=1', undefined, (err, row) => {
 				expect(PasswordHash.verify('admin', row.password)).toBe(true);

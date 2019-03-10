@@ -117,14 +117,37 @@ describe('Get template data from real database', () => {
 					' should resolve to a ' +
 					testCase.input.name +
 					' type',
-				() => {
-					expect(
-						GetTemplateData(
-							{ db, mqtt },
-							testCase.input.id,
-							testCase.input.name
-						)
-					).resolves.toEqual(testCase.expect);
+				done => {
+					const conn = {
+						db,
+						mqtt,
+						getMapping: jest.fn((nodeUUID, templateID, name) => {
+							let map = '';
+							switch (templateID) {
+								case 1:
+									//switch
+									map = 'ep_1_switch_' + name;
+									break;
+								case 2:
+									//lamp
+									map = 'ep_1_lamp_' + name;
+									break;
+								case 3:
+									//thermostat
+									map = 'ep_1_thermostat_' + name;
+							}
+							return Promise.resolve('nodes/' + nodeUUID + '/' + map);
+						})
+					};
+					GetTemplateData(conn, testCase.input.id, testCase.input.name).then(
+						resp => {
+							expect(resp).toEqual(testCase.expect);
+							expect(conn.getMapping).toBeCalledTimes(
+								Object.keys(testCase.expect).length - 1
+							);
+							done();
+						}
+					);
 				}
 			);
 		});
@@ -132,32 +155,12 @@ describe('Get template data from real database', () => {
 });
 
 describe('Get template data from always-failing database', () => {
-	test('First db.get will fail', () => {
+	test('db.get will fail', () => {
 		const db = {
-			get: jest.fn((sql, props, cb) => cb('DB Error at 1st get'))
+			get: jest.fn((sql, props, cb) => cb('DB Error at get'))
 		};
 		expect(GetTemplateData({ db }, 1, 'switch')).rejects.toBe(
-			'DB Error at 1st get'
+			'DB Error at get'
 		);
-	});
-
-	describe('Second tb.get will fail', () => {
-		tests.forEach(testCase => {
-			test('Should reject at: ' + testCase.input.name, () => {
-				const db = {
-					get: jest
-						.fn()
-						.mockImplementationOnce((sql, props, cb) =>
-							cb(null, { uuid: 'uuid1' })
-						)
-						.mockImplementationOnce((sql, props, cb) =>
-							cb('DB Error at 2nd get')
-						)
-				};
-				expect(GetTemplateData({ db }, 1, testCase.input.name)).rejects.toBe(
-					'DB Error at 2nd get'
-				);
-			});
-		});
 	});
 });

@@ -1,5 +1,4 @@
 import PasswordHash from 'password-hash';
-import GetUser from './getUser';
 
 const updateUser = (conn, id, options) => {
 	return new Promise((resolve, reject) => {
@@ -10,7 +9,7 @@ const updateUser = (conn, id, options) => {
 				if (err) {
 					reject(err);
 				} else {
-					resolve(GetUser(conn, id));
+					resolve(conn.getUser(id));
 				}
 			}
 		);
