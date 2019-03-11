@@ -18,6 +18,9 @@ import GetEndpointForMapping from './nodes/getEndpointForMapping';
 import GetNodesByTemplate from './nodes/getNodesByTemplate';
 import UpdateNode from './nodes/updateNode';
 import UpdateTemplateData from './nodes/updateTemplateData';
+import GetTopic from './mqtt/getTopic';
+import PublishTopic from './mqtt/publishTopic';
+import SubscribeTopic from './mqtt/subscribeTopic';
 
 class Connector {
 	init(options, callback) {
@@ -114,6 +117,21 @@ class Connector {
 
 	updateTemplateData(templateID, options) {
 		return UpdateTemplateData(this, templateID, options);
+	}
+
+	/*
+	 * MQTT
+	 */
+	getTopic(topic) {
+		return GetTopic(this, topic);
+	}
+
+	publishTopic(topic, payload) {
+		return PublishTopic(this, topic, payload);
+	}
+
+	subscribeTopic(topic, payload) {
+		return SubscribeTopic(this, topic, payload);
 	}
 }
 

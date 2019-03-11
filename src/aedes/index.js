@@ -24,7 +24,4 @@ aedes.authorizePublish = authorize.publish;
 aedes.authorizeSubscribe = authorize.subscribe;
 
 export { aedes, store };
-export const publish = aedes.publish;
-export const subscribe = aedes.subscribe;
-export const unsubscribe = aedes.unsubscribe;
 export default server;

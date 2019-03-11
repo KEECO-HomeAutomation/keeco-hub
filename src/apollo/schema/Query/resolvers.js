@@ -23,6 +23,13 @@ const resolvers = {
 
 			return ctx.connector.logout(ctx.user.token);
 		}
+	},
+	Subscription: {
+		_: (parent, args, ctx) => {
+			subscribe: () => {
+				return pubsub.asyncIterator(['_']);
+			};
+		}
 	}
 };
 
