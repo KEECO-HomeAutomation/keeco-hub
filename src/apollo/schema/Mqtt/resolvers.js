@@ -20,14 +20,14 @@ const resolvers = {
 		}
 	},
 	Subscription: {
-		subscribeTopic: (parent, args, ctx) => {
-			subscribe: () => {
+		subscribeTopic: {
+			subscribe: (parent, args, ctx)  => {
 				if (!ctx.user) {
 					throw new AuthenticationError();
 				}
 
 				return ctx.connector.subscribeTopic(args.topic);
-			};
+			}
 		}
 	}
 };

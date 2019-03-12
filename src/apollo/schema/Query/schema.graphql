@@ -7,7 +7,7 @@ type Mutation {
 	logout: LogoutPayload!
 }
 
-type Subscription{
+type Subscription {
 	_: Boolean
 }
 

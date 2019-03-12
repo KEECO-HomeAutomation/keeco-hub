@@ -1,17 +1,19 @@
 const subscribeTopic = (conn, topic) => {
 	return new Promise(resolve => {
+		console.log("ASD");
 		conn.mqtt.aedes.subscribe(
 			topic,
 			(packet, cb) => {
 				conn.gql.pubsub.publish('mqtt_' + topic, {
 					subscribeTopic: {
 						topic: packet.topic,
-						payload: packet.payload
+						payload: packet.payload.toString('UTF-8')
 					}
 				});
+				cb();
 			},
 			() => {
-				resolve(conn.pubsub.asyncIterator(['mqtt_' + topic]));
+				resolve(conn.gql.pubsub.asyncIterator(['mqtt_' + topic]));
 			}
 		);
 	});
