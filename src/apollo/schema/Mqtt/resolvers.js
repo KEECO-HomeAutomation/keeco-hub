@@ -21,7 +21,7 @@ const resolvers = {
 	},
 	Subscription: {
 		subscribeTopic: {
-			subscribe: (parent, args, ctx)  => {
+			subscribe: (parent, args, ctx) => {
 				if (!ctx.user) {
 					throw new AuthenticationError();
 				}

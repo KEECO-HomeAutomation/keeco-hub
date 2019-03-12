@@ -25,10 +25,10 @@ const resolvers = {
 		}
 	},
 	Subscription: {
-		_: (parent, args, ctx) => {
-			subscribe: () => {
-				return pubsub.asyncIterator(['_']);
-			};
+		_: {
+			subscribe: (parent, args, ctx) => {
+				return ctx.connector.gql.pubsub.asyncIterator(['_']);
+			}
 		}
 	}
 };

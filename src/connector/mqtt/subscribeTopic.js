@@ -1,6 +1,5 @@
 const subscribeTopic = (conn, topic) => {
 	return new Promise(resolve => {
-		console.log("ASD");
 		conn.mqtt.aedes.subscribe(
 			topic,
 			(packet, cb) => {
