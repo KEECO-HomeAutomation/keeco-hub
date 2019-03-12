@@ -1,6 +1,6 @@
 const publishTopic = (conn, topic, payload) => {
 	return new Promise(resolve => {
-		conn.mqtt.publish(
+		conn.mqtt.aedes.publish(
 			{
 				topic: topic,
 				payload: payload

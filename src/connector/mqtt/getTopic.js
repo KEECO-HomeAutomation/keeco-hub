@@ -1,5 +1,5 @@
 const getTopic = (conn, topic) => {
-	return Promise.resovle(conn.mqtt.store.get(topic).value);
+	return Promise.resolve(conn.mqtt.store.get(topic).value);
 };
 
 export default getTopic;

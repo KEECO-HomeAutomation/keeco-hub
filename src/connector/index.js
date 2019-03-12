@@ -123,6 +123,7 @@ class Connector {
 	 * MQTT
 	 */
 	getTopic(topic) {
+		console.log("getTopic");
 		return GetTopic(this, topic);
 	}
 

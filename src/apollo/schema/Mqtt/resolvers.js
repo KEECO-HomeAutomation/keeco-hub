@@ -7,7 +7,7 @@ const resolvers = {
 				throw new AuthenticationError();
 			}
 
-			return conn.getTopic(args.topic);
+			return ctx.connector.getTopic(args.topic);
 		}
 	},
 	Mutation: {
@@ -16,14 +16,20 @@ const resolvers = {
 				throw new AuthenticationError();
 			}
 
-			return conn.publishTopic(args.topic, args.payload);
+			return ctx.connector.publishTopic(args.topic, args.payload);
 		}
 	},
 	Subscription: {
 		subscribeTopic: (parent, args, ctx) => {
 			subscribe: () => {
-				conn.
-			}
+				if (!ctx.user) {
+					throw new AuthenticationError();
+				}
+
+				return ctx.connector.subscribeTopic(args.topic);
+			};
 		}
 	}
 };
+
+export default resolvers;
