@@ -1,4 +1,7 @@
+import uuid from 'uuid';
 import SubscribeTopic from './subscribeTopic';
+
+jest.mock('uuid');
 
 describe('Subscribe to topic', () => {
 	var subscribeCb;
@@ -41,9 +44,10 @@ describe('Subscribe to topic', () => {
 	});
 
 	test('When received packet should call gql.pubsub.publish', () => {
+		uuid.v4.mockReturnValue('uuid');
 		SubscribeTopic(conn, 'topic');
 		expect(conn.gql.pubsub.publish).toBeCalledTimes(1);
-		expect(conn.gql.pubsub.publish).toBeCalledWith('mqtt_topic', {
+		expect(conn.gql.pubsub.publish).toBeCalledWith('mqtt_topic_uuid', {
 			subscribeTopic: {
 				topic: 'topic',
 				payload: 'payload'
@@ -57,9 +61,10 @@ describe('Subscribe to topic', () => {
 	});
 
 	test('Should call asyncIterator function of gql.pubsub', () => {
+		uuid.v4.mockReturnValue('uuid');
 		SubscribeTopic(conn, 'topic');
 		expect(conn.gql.pubsub.asyncIterator).toBeCalledTimes(1);
-		expect(conn.gql.pubsub.asyncIterator).toBeCalledWith(['mqtt_topic']);
+		expect(conn.gql.pubsub.asyncIterator).toBeCalledWith(['mqtt_topic_uuid']);
 	});
 
 	test('Should resolve to asyncIterator', () => {
