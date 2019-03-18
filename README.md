@@ -4,6 +4,7 @@
 
 [![ci](https://ci.systemtest.tk/badge/3)](https://ci.systemtest.tk/repo/3)
 [![bucket](https://img.shields.io/badge/-Build%20Bucket-yellow.svg)](http://s.go.ro/s2qh8vv7)
+[![trello](https://img.shields.io/badge/-Trello-brightgreen.svg)](https://trello.com/b/pJbFnbiH/keeco)
 
 The central software which orchestrates all the hardware nodes and provides an API for the client access.
 

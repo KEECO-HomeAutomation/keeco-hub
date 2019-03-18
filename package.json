@@ -6,8 +6,8 @@
   "scripts": {
     "test": "jest --watchAll",
     "test:coverage": "jest --collectCoverage --verbose",
-    "lint": "eslint src/**/*.js",
-    "format": "prettier --write src/**/*.js src/**/*.graphql",
+    "lint": "eslint 'src/**/*.js'",
+    "format": "prettier --write 'src/**/*.js' 'src/**/*.graphql'",
     "start": "nodemon --exec babel-node src/index.js",
     "build": "babel src -d build"
   },
@@ -36,7 +36,7 @@
     "eslint-plugin-prettier": "^3.0.1",
     "jest": "^24.0.0",
     "nodemon": "^1.18.9",
-    "prettier": "^1.16.1"
+    "prettier": "^1.16.4"
   },
   "dependencies": {
     "aedes": "^0.36.0",

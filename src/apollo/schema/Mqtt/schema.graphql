@@ -1,0 +1,16 @@
+extend type Query {
+	getTopic(topic: String!): String
+}
+
+extend type Mutation {
+	publishTopic(topic: String!, payload: String!): MQTTPacket
+}
+
+extend type Subscription {
+	subscribeTopic(topic: String!): MQTTPacket
+}
+
+type MQTTPacket {
+	topic: String!
+	payload: String
+}

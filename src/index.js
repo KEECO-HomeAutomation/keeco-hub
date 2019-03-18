@@ -1,4 +1,4 @@
-import gqlServer from './apollo';
+import gqlServer, { pubsub } from './apollo';
 import mqttServer, { aedes, store } from './aedes';
 import db from './sqlite';
 import connector from './connector';
@@ -24,7 +24,7 @@ connector.init(
 	{
 		db: db,
 		mqtt: { aedes, store },
-		gql: gqlServer
+		gql: { gqlServer, pubsub }
 	},
 	() => {
 		log('Connector', 'Connector successfully set up', 'message');
