@@ -62,6 +62,17 @@ const resolvers = {
 				return ctx.connector.deleteUser(args.id);
 			}
 		}
+	},
+	Subscription: {
+		userSubscription: {
+			subscribe: (parent, args, ctx) => {
+				if (!ctx.user) {
+					throw new AuthenticationError();
+				}
+
+				return ctx.connector.userSubscription().subscribe();
+			}
+		}
 	}
 };
 

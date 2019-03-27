@@ -23,7 +23,9 @@ const createUser = (conn, options) => {
 								if (err) {
 									reject(err);
 								} else {
-									resolve({ ...options, id: this.lastID });
+									let user = { ...options, id: this.lastID };
+									conn.userSubscription().publish('CREATED', user);
+									resolve(user);
 								}
 							}
 						);

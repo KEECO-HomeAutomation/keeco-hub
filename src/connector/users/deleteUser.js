@@ -4,6 +4,7 @@ const deleteUser = (conn, id) => {
 			if (err) {
 				reject(err);
 			} else {
+				conn.userSubscription().publish('DELETED', { id, username: '' });
 				resolve({ id });
 			}
 		});

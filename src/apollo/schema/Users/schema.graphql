@@ -5,8 +5,12 @@ extend type Query {
 
 extend type Mutation {
 	createUser(input: CreateUserInput!): User!
-	updateUser(id: ID!, input: UpdateUserInput!): User!
+	updateUser(id: ID!, input: UpdateUserInput!): User
 	deleteUser(id: ID!): DeleteUserPayload!
+}
+
+extend type Subscription {
+	userSubscription: UserSubscription!
 }
 
 type User {
@@ -31,4 +35,9 @@ input UpdateUserInput {
 
 type DeleteUserPayload {
 	id: ID!
+}
+
+type UserSubscription {
+	mutation: MutationType!
+	node: User!
 }

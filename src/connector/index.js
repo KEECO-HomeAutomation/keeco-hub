@@ -7,6 +7,7 @@ import GetSessions from './users/getSessions';
 import CreateUser from './users/createUser';
 import UpdateUser from './users/updateUser';
 import DeleteUser from './users/deleteUser';
+import UserSubscription from './users/userSubscription';
 import GetNodes from './nodes/getNodes';
 import GetNode from './nodes/getNode';
 import GetEndpoints from './nodes/getEndpoints';
@@ -70,6 +71,10 @@ class Connector {
 
 	deleteUser(id) {
 		return DeleteUser(this, id);
+	}
+
+	userSubscription() {
+		return UserSubscription(this);
 	}
 
 	/*

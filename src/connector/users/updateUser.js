@@ -9,7 +9,9 @@ const updateUser = (conn, id, options) => {
 				if (err) {
 					reject(err);
 				} else {
-					resolve(conn.getUser(id));
+					let user = conn.getUser(id);
+					conn.userSubscription().publish('UPDATED', user);
+					resolve(user);
 				}
 			}
 		);
