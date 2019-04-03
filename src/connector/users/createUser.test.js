@@ -5,27 +5,35 @@ import PasswordHash from 'password-hash';
 import CreateUser from './createUser';
 
 describe('Create user with real database', () => {
-	var db = null;
+	var mockedPublish = null;
+	var conn = null;
 	beforeEach(done => {
-		db = new SQLite.Database(
-			':memory:',
-			SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
-			error => {
-				if (!error) {
-					populate(db, error => {
-						if (!error) {
-							db.exec('PRAGMA foreign_keys=ON');
-							done();
-						}
-					});
+		mockedPublish = jest.fn();
+		conn = {
+			db: new SQLite.Database(
+				':memory:',
+				SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
+				error => {
+					if (!error) {
+						populate(conn.db, error => {
+							if (!error) {
+								conn.db.exec('PRAGMA foreign_keys=ON');
+								done();
+							}
+						});
+					}
 				}
-			}
-		);
+			),
+			userSubscription: () => ({
+				publish: mockedPublish
+			})
+		};
 	}, 10000);
 	afterEach(done => {
-		db.close(error => {
+		conn.db.close(error => {
 			if (!error) {
-				db = null;
+				conn = null;
+				mockedPublish = null;
 				done();
 			}
 		});
@@ -33,9 +41,9 @@ describe('Create user with real database', () => {
 
 	test('If username already taken, resolve to null and do not insert into database', done => {
 		expect(
-			CreateUser({ db }, { username: 'admin', password: 'password' })
+			CreateUser(conn, { username: 'admin', password: 'password' })
 		).resolves.toBe(null);
-		db.all('SELECT * FROM users', (err, rows) => {
+		conn.db.all('SELECT * FROM users', (err, rows) => {
 			expect(err).toBe(null);
 			expect(rows.length).toBe(1);
 			done();
@@ -43,13 +51,20 @@ describe('Create user with real database', () => {
 	});
 
 	test('If username available, create new user', done => {
-		CreateUser({ db }, { username: 'test', password: 'test' }).then(res => {
+		CreateUser(conn, { username: 'test', password: 'test' }).then(res => {
 			expect(res).toEqual({ username: 'test', password: 'test', id: 2 });
-			db.get('SELECT * FROM users WHERE id=2', undefined, (err, row) => {
+			conn.db.get('SELECT * FROM users WHERE id=2', undefined, (err, row) => {
 				expect(row.username).toBe('test');
 				expect(PasswordHash.verify('test', row.password)).toBe(true);
 				done();
 			});
+		});
+	});
+
+	test('It should post a subscription', done => {
+		CreateUser(conn, { username: 'test', password: 'test' }).then(() => {
+			expect(mockedPublish).toBeCalledTimes(1);
+			done();
 		});
 	});
 });

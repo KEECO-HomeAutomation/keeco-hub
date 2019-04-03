@@ -4,36 +4,43 @@ import populate from '../../sqlite/populate';
 import DeleteUser from './deleteUser';
 
 describe('Delete user with real database', () => {
-	var db = null;
+	var mockedPublish = null;
+	var conn = null;
 	beforeEach(done => {
-		db = new SQLite.Database(
-			':memory:',
-			SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
-			error => {
-				if (!error) {
-					populate(db, error => {
-						if (!error) {
-							db.exec('PRAGMA foreign_keys=ON');
-							done();
-						}
-					});
+		conn = {
+			db: new SQLite.Database(
+				':memory:',
+				SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
+				error => {
+					if (!error) {
+						populate(conn.db, error => {
+							if (!error) {
+								conn.db.exec('PRAGMA foreign_keys=ON');
+								done();
+							}
+						});
+					}
 				}
-			}
-		);
+			),
+			userSubscription: () => ({
+				publish: mockedPublish
+			})
+		};
 	}, 10000);
 	afterEach(done => {
-		db.close(error => {
+		conn.db.close(error => {
 			if (!error) {
-				db = null;
+				conn = null;
+				mockedPublish = null;
 				done();
 			}
 		});
 	}, 10000);
 
 	test('User with id=1 should be deleted', done => {
-		DeleteUser({ db }, 1).then(res => {
+		DeleteUser(conn, 1).then(res => {
 			expect(res).toEqual({ id: 1 });
-			db.all('SELECT * FROM users', undefined, (err, rows) => {
+			conn.db.all('SELECT * FROM users', undefined, (err, rows) => {
 				expect(rows.length).toBe(0);
 				done();
 			});
@@ -41,7 +48,7 @@ describe('Delete user with real database', () => {
 	});
 
 	test('Should resolve, even when the respected user id does not exist', () => {
-		expect(DeleteUser({ db }, 500)).resolves.toEqual({ id: 500 });
+		expect(DeleteUser(conn, 500)).resolves.toEqual({ id: 500 });
 	});
 });
 
