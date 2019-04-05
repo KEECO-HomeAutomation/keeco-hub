@@ -5,7 +5,6 @@ const userSubscription = conn => ({
 		});
 	},
 	publish: (type, user) => {
-		console.log(user);
 		if (user!==null) {
 			conn.gql.pubsub.publish('user', {
 				userSubscription: {

@@ -24,7 +24,9 @@ const createUser = (conn, options) => {
 									reject(err);
 								} else {
 									let user = { ...options, id: this.lastID };
-									conn.userSubscription().publish('CREATED', user);
+									conn
+										.userSubscription()
+										.publish('CREATED', { ...user, password: undefined });
 									resolve(user);
 								}
 							}

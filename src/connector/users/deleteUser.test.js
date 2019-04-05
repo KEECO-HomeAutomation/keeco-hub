@@ -7,6 +7,7 @@ describe('Delete user with real database', () => {
 	var mockedPublish = null;
 	var conn = null;
 	beforeEach(done => {
+		mockedPublish = jest.fn();
 		conn = {
 			db: new SQLite.Database(
 				':memory:',
@@ -47,14 +48,34 @@ describe('Delete user with real database', () => {
 		});
 	});
 
-	test('Should resolve, even when the respected user id does not exist', () => {
-		expect(DeleteUser(conn, 500)).resolves.toEqual({ id: 500 });
+	test('Should resolve to null when the requested user does not exist', () => {
+		expect(DeleteUser(conn, 500)).resolves.toBe(null);
+	});
+
+	test('Should post to the subscription', done => {
+		DeleteUser(conn, 1).then(() => {
+			expect(mockedPublish).toBeCalledTimes(1);
+			expect(mockedPublish).toBeCalledWith('DELETED', {
+				id: 1,
+				username: 'admin'
+			});
+			done();
+		});
 	});
 });
 
 describe('Delete user with always-failing database', () => {
-	test('db.run will fail', () => {
-		const db = { run: jest.fn((sql, props, cb) => cb('DB Error at run')) };
+	test('db.get will fail', () => {
+		const db = { get: jest.fn((sql, props, cb) => cb('DB Error at get')) };
+		expect(DeleteUser({ db }, 1)).rejects.toBe('DB Error at get');
+	});
+	test('db.get will pass, db.run will fail', () => {
+		const db = {
+			get: jest.fn((sql, props, cb) =>
+				cb(null, { count: 1, username: 'admin' })
+			),
+			run: jest.fn((sql, props, cb) => cb('DB Error at run'))
+		};
 		expect(DeleteUser({ db }, 1)).rejects.toBe('DB Error at run');
 	});
 });

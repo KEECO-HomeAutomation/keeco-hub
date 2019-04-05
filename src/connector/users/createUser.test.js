@@ -64,6 +64,10 @@ describe('Create user with real database', () => {
 	test('It should post a subscription', done => {
 		CreateUser(conn, { username: 'test', password: 'test' }).then(() => {
 			expect(mockedPublish).toBeCalledTimes(1);
+			expect(mockedPublish).toBeCalledWith('CREATED', {
+				id: 2,
+				username: 'test'
+			});
 			done();
 		});
 	});
