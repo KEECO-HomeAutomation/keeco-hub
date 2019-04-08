@@ -5,7 +5,7 @@ const userSubscription = conn => ({
 		});
 	},
 	publish: (type, user) => {
-		if (user!==null) {
+		if (user !== null && ['CREATED', 'UPDATED', 'DELETED'].includes(type)) {
 			conn.gql.pubsub.publish('user', {
 				userSubscription: {
 					mutation: type,
