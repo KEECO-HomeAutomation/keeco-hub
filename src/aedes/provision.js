@@ -20,7 +20,13 @@ const provision = (conn, prov) => {
 							} else {
 								//try to add node
 								try {
-									addNode(conn, prov, () => {
+									addNode(conn, prov, id => {
+										//publish node created subscription
+										conn.nodeSubscription().publish('CREATED', {
+											id: id,
+											uuid: prov.uuid,
+											name: prov.name
+										});
 										resolve({ isNew: true, uuid: prov.uuid });
 									});
 								} catch (e) {
@@ -138,8 +144,8 @@ const addNode = (conn, prov, callback) => {
 						}
 
 						if (i + 1 >= mappings.length) {
-							//finished inserting mappings. Calling callback
-							cb();
+							//finished inserting mappings. Calling callback with the id of the node
+							cb(nodeID);
 						} else {
 							try {
 								insertMapping(mappings, templateID, i + 1, cb);

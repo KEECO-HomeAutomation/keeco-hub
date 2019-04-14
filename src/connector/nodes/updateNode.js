@@ -7,7 +7,9 @@ const updateNode = (conn, nodeID, options) => {
 				if (err) {
 					reject(err);
 				} else {
-					resolve(conn.getNode(nodeID));
+					let node = conn.getNode(nodeID);
+					conn.nodeSubscription().publish('UPDATED', node);
+					resolve(node);
 				}
 			}
 		);

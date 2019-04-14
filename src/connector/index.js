@@ -19,6 +19,8 @@ import GetEndpointForMapping from './nodes/getEndpointForMapping';
 import GetNodesByTemplate from './nodes/getNodesByTemplate';
 import UpdateNode from './nodes/updateNode';
 import UpdateTemplateData from './nodes/updateTemplateData';
+import DeleteNode from './nodes/deleteNode';
+import NodeSubscription from './nodes/nodeSubscription';
 import GetTopic from './mqtt/getTopic';
 import PublishTopic from './mqtt/publishTopic';
 import SubscribeTopic from './mqtt/subscribeTopic';
@@ -122,6 +124,14 @@ class Connector {
 
 	updateTemplateData(templateID, options) {
 		return UpdateTemplateData(this, templateID, options);
+	}
+
+	deleteNode(id) {
+		return DeleteNode(this, id);
+	}
+
+	nodeSubscription() {
+		return NodeSubscription(this);
 	}
 
 	/*
