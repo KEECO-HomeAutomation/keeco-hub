@@ -4,48 +4,56 @@ import populate from '../../sqlite/populate';
 import UpdateNode from './updateNode';
 
 describe('Update node in real database', () => {
-	var db = null;
+	var mockedPublish = null;
+	var conn = null;
 	beforeEach(done => {
-		db = new SQLite.Database(
-			':memory:',
-			SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
-			error => {
-				if (!error) {
-					populate(db, error => {
-						if (!error) {
-							db.exec('PRAGMA foreign_keys=ON');
+		mockedPublish = jest.fn();
+		conn = {
+			db: new SQLite.Database(
+				':memory:',
+				SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
+				error => {
+					if (!error) {
+						populate(conn.db, error => {
+							if (!error) {
+								conn.db.exec('PRAGMA foreign_keys=ON');
 
-							//add sample nodes
-							db.exec(
-								'INSERT INTO nodes (uuid, name) VALUES ("uuid1", "node1"),("uuid2", "node2");',
-								error => {
-									if (!error) {
-										done();
+								//add sample nodes
+								conn.db.exec(
+									'INSERT INTO nodes (uuid, name) VALUES ("uuid1", "node1"),("uuid2", "node2");',
+									error => {
+										if (!error) {
+											done();
+										}
 									}
-								}
-							);
-						}
-					});
+								);
+							}
+						});
+					}
 				}
-			}
-		);
+			),
+			nodeSubscription: () => ({
+				publish: mockedPublish
+			})
+		};
 	}, 10000);
 	afterEach(done => {
-		db.close(error => {
+		conn.db.close(error => {
 			if (!error) {
-				db = null;
+				conn = null;
+				mockedPublish = null;
 				done();
 			}
 		});
 	}, 10000);
 
 	test('Should update the database for node1', done => {
-		const conn = {
-			db,
+		const customConn = {
+			...conn,
 			getNode: jest.fn()
 		};
-		UpdateNode(conn, 1, { name: 'newName' }).then(() => {
-			db.get(
+		UpdateNode(customConn, 1, { name: 'newName' }).then(() => {
+			conn.db.get(
 				'SELECT id, name, uuid FROM nodes WHERE id=$id',
 				{ $id: 1 },
 				(err, row) => {
@@ -63,12 +71,12 @@ describe('Update node in real database', () => {
 	});
 
 	test('Updating node 1 should not update other nodes', done => {
-		const conn = {
-			db,
+		const customConn = {
+			...conn,
 			getNode: jest.fn()
 		};
-		UpdateNode(conn, 1, { name: 'newName' }).then(() => {
-			db.get(
+		UpdateNode(customConn, 1, { name: 'newName' }).then(() => {
+			conn.db.get(
 				'SELECT id, name, uuid FROM nodes WHERE id=$id',
 				{ $id: 2 },
 				(err, row) => {
@@ -86,14 +94,26 @@ describe('Update node in real database', () => {
 	});
 
 	test('Updating a node should return the new node by calling getNode', done => {
-		const conn = {
-			db,
+		const customConn = {
+			...conn,
 			getNode: jest.fn().mockReturnValue({ mocked: true })
 		};
-		UpdateNode(conn, 1, { name: 'newName' }).then(resp => {
+		UpdateNode(customConn, 1, { name: 'newName' }).then(resp => {
 			expect(resp).toEqual({ mocked: true });
-			expect(conn.getNode.mock.calls.length).toBe(1);
-			expect(conn.getNode).toBeCalledWith(1);
+			expect(customConn.getNode).toBeCalledTimes(1);
+			expect(customConn.getNode).toBeCalledWith(1);
+			done();
+		});
+	});
+
+	test('Updating a node should post a subscription', done => {
+		const customConn = {
+			...conn,
+			getNode: jest.fn().mockReturnValue({ mocked: true })
+		};
+		UpdateNode(customConn, 1, { name: 'newName' }).then(() => {
+			expect(mockedPublish).toBeCalledTimes(1);
+			expect(mockedPublish).toBeCalledWith('UPDATED', { mocked: true });
 			done();
 		});
 	});
