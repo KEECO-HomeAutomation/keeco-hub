@@ -1,5 +1,6 @@
-import UserSubscription from './userSubscription';
 import * as yup from 'yup';
+
+import UserSubscription from './userSubscription';
 
 describe('Testing user subscriptions', () => {
 	var conn = null;
