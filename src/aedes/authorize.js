@@ -13,7 +13,7 @@ export const publish = (client, packet, callback) => {
 		return;
 	}
 
-	if (packet.topic.match(new RegExp('nodes/' + client.uuid + '/\\S+'))) {
+	if (packet.topic.match(new RegExp('^nodes/' + client.uuid + '/\\S+'))) {
 		callback(null);
 		return;
 	} else {
@@ -40,7 +40,7 @@ export const subscribe = (client, sub, callback) => {
 		return;
 	}
 
-	if (sub.topic.match(new RegExp('nodes/' + client.uuid + '/\\S+'))) {
+	if (sub.topic.match(new RegExp('^nodes/' + client.uuid + '/\\S+'))) {
 		callback(null, sub);
 		return;
 	} else {
