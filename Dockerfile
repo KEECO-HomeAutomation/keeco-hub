@@ -20,7 +20,7 @@ RUN curl -sL -o node_setup.sh https://deb.nodesource.com/setup_10.x && \
 # copy files for hub
 RUN mkdir -p /opt/keeco-hub
 WORKDIR /opt/keeco-hub
-COPY build/* ./
+COPY build/ ./
 COPY package.json package-lock.json ./
 
 # install dependencies
