@@ -57,6 +57,13 @@ const resolvers = {
 			if (update) {
 				return update;
 			}
+		},
+		deleteNode: (parent, args, ctx) => {
+			if (!ctx.user) {
+				throw new AuthenticationError();
+			}
+
+			return ctx.connector.deleteNode(args.id);
 		}
 	},
 	Node: {
@@ -110,6 +117,17 @@ const resolvers = {
 			}
 
 			return ctx.connector.getEndpointForMapping(parent.id);
+		}
+	},
+	Subscription: {
+		nodeSubscription: {
+			subscribe: (parent, args, ctx) => {
+				if (!ctx.user) {
+					throw new AuthenticationError();
+				}
+
+				return ctx.connector.nodeSubscription().subscribe();
+			}
 		}
 	}
 };

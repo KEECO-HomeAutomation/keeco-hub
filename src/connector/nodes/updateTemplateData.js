@@ -4,7 +4,7 @@ import { UserInputError } from 'apollo-server';
 const updateTemplateData = (conn, templateID, options) => {
 	return new Promise((resolve, reject) => {
 		conn.db.get(
-			'SELECT n.uuid, nt.id, nt.name FROM node_templates AS nt INNER JOIN nodes AS n ON (n.id=nt.node) WHERE nt.id=$templateID',
+			'SELECT n.id AS nodeID, n.uuid, nt.id, nt.name FROM node_templates AS nt INNER JOIN nodes AS n ON (n.id=nt.node) WHERE nt.id=$templateID',
 			{ $templateID: templateID },
 			(err, row) => {
 				if (err) {
@@ -15,6 +15,9 @@ const updateTemplateData = (conn, templateID, options) => {
 					} else {
 						updateMQTT(conn, row.uuid, templateID, options).then(
 							() => {
+								conn
+									.nodeSubscription()
+									.publish('UPDATED', conn.getNode(row.nodeID));
 								resolve({
 									id: row.id,
 									name: row.name

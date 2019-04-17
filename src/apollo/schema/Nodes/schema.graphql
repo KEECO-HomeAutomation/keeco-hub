@@ -10,6 +10,11 @@ extend type Query {
 extend type Mutation {
 	updateNode(id: ID!, input: UpdateNodeInput!): Node
 	updateTemplateData(id: ID!, input: UpdateTemplateDataInput!): Template
+	deleteNode(id: ID!): DeleteNodePayload
+}
+
+extend type Subscription {
+	nodeSubscription: NodeSubscription!
 }
 
 type Node {
@@ -43,4 +48,13 @@ type Mapping {
 
 input UpdateNodeInput {
 	name: String
+}
+
+type DeleteNodePayload {
+	id: ID!
+}
+
+type NodeSubscription {
+	mutation: MutationType!
+	node: Node!
 }

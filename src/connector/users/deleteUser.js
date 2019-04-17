@@ -1,12 +1,29 @@
 const deleteUser = (conn, id) => {
 	return new Promise((resolve, reject) => {
-		conn.db.run('DELETE FROM users WHERE id=$id', { $id: id }, err => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve({ id });
+		conn.db.get(
+			'SELECT COUNT(id) AS count, username FROM users WHERE id=$id',
+			{ $id: id },
+			(err, row) => {
+				if (err) {
+					reject(err);
+				} else {
+					if (row.count === 0) {
+						resolve(null);
+					} else {
+						conn.db.run('DELETE FROM users WHERE id=$id', { $id: id }, err => {
+							if (err) {
+								reject(err);
+							} else {
+								conn
+									.userSubscription()
+									.publish('DELETED', { id, username: row.username });
+								resolve({ id });
+							}
+						});
+					}
+				}
 			}
-		});
+		);
 	});
 };
 

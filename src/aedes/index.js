@@ -2,6 +2,8 @@ import Aedes from 'aedes';
 import net from 'net';
 import MQTTStore from 'mqtt-store';
 
+import connector from '../connector';
+
 import authenticate from './authenticate';
 import * as authorize from './authorize';
 
@@ -12,7 +14,11 @@ const server = net.createServer(aedes.handle);
 const store = new MQTTStore();
 
 //subscribe store for all the changes
-aedes.on('publish', packet => {
+aedes.on('publish', (packet, client) => {
+	//publish to subscription
+	connector.nodeSubscription().mqttTrigger(packet.topic, client);
+
+	//sync store
 	store.put(packet.topic, packet.payload.toString('utf-8'));
 });
 

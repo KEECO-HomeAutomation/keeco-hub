@@ -7,6 +7,7 @@ import GetSessions from './users/getSessions';
 import CreateUser from './users/createUser';
 import UpdateUser from './users/updateUser';
 import DeleteUser from './users/deleteUser';
+import UserSubscription from './users/userSubscription';
 import GetNodes from './nodes/getNodes';
 import GetNode from './nodes/getNode';
 import GetEndpoints from './nodes/getEndpoints';
@@ -18,6 +19,8 @@ import GetEndpointForMapping from './nodes/getEndpointForMapping';
 import GetNodesByTemplate from './nodes/getNodesByTemplate';
 import UpdateNode from './nodes/updateNode';
 import UpdateTemplateData from './nodes/updateTemplateData';
+import DeleteNode from './nodes/deleteNode';
+import NodeSubscription from './nodes/nodeSubscription';
 import GetTopic from './mqtt/getTopic';
 import PublishTopic from './mqtt/publishTopic';
 import SubscribeTopic from './mqtt/subscribeTopic';
@@ -72,6 +75,10 @@ class Connector {
 		return DeleteUser(this, id);
 	}
 
+	userSubscription() {
+		return UserSubscription(this);
+	}
+
 	/*
 	 * nodes
 	 */
@@ -117,6 +124,14 @@ class Connector {
 
 	updateTemplateData(templateID, options) {
 		return UpdateTemplateData(this, templateID, options);
+	}
+
+	deleteNode(id) {
+		return DeleteNode(this, id);
+	}
+
+	nodeSubscription() {
+		return NodeSubscription(this);
 	}
 
 	/*

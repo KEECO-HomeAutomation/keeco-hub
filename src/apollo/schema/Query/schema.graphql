@@ -22,3 +22,9 @@ input LoginInput {
 type LogoutPayload {
 	token: String!
 }
+
+enum MutationType {
+	CREATED
+	UPDATED
+	DELETED
+}
