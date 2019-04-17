@@ -1,6 +1,6 @@
 node_modules
 build
 coverage
+config
 *.sublime-project
 *.sublime-workspace
-*.sqlite

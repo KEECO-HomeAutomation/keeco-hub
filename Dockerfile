@@ -1,7 +1,8 @@
 FROM debian:stable-slim
 
-# set apt to noninteractive shell
+# set up env
 ENV DEBIAN_FRONTEND=noninteractive
+ENV NODE_ENV=production
 
 # update package definitions
 RUN apt-get update
@@ -26,6 +27,9 @@ COPY package.json package-lock.json ./
 # install dependencies
 RUN npm ci --only=production
 
-# set up
+# expose ports
 EXPOSE 5000
+EXPOSE 1883
+EXPOSE 6763
+
 CMD ["node", "index.js"]
