@@ -14,11 +14,15 @@ if (isDev()) {
 class Db {
 	//initialize database
 	init(file, callback) {
+		//check if config folder exists. If not, create
+		if (!fs.existsSync(path.join(process.cwd(), 'config'))) {
+			fs.mkdirSync(path.join(process.cwd(), 'config'));
+		}
 		//check if DB is set up already
-		let dbExists = fs.existsSync(path.join(process.cwd(), file));
+		let dbExists = fs.existsSync(path.join(process.cwd(), 'config', file));
 
 		this.db = new SQLite.Database(
-			file,
+			path.join(process.cwd(), 'config', file),
 			SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
 			error => {
 				if (error) {
