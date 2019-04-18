@@ -21,6 +21,24 @@ The central software which orchestrates all the hardware nodes and provides an A
 
 
 
+## Using docker
+
+We have a docker container which has all the dependencies installed for the hub. You can use it, if you want an easy, plug'n'play solution.
+
+Run the container with:
+```bash
+docker run -dit -v keeco_hub_conf:/opt/keeco-hub/config -p 5000:5000 -p 1883:1883 -p 5353:5353 keeco/keeco-hub
+```
+
+The ports used:
+- _5000_ for graphQL API
+- _1883_ for MQTT
+- _5353_ for mDNS. If you don't need it, you can leave it out.
+
+We use a persistent volume managed by docker (_keeco_hub_conf_), but you can use a local binding as well.
+
+
+
 ## Which is which
 
 - _src/index.js_ : The entrypoint of the hub. It just initializes every module.

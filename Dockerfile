@@ -30,6 +30,6 @@ RUN npm ci --only=production
 # expose ports
 EXPOSE 5000
 EXPOSE 1883
-EXPOSE 6763
+EXPOSE 5353
 
 CMD ["node", "index.js"]

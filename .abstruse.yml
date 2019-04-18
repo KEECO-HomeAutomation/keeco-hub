@@ -14,3 +14,7 @@ deploy:
   - npm run build
   - tar -czvf dist.tar.gz -C build .
   - /home/abstruse/deploy.sh "KeecoHub-$ABSTRUSE_BRANCH" "KeecoHub" dist.tar.gz
+  - docker login -u $DOCKER_USER -p $DOCKER_PASSWD
+  - if [ "$ABSTRUSE_BRANCH" == "master" ]; then export DOCKER_TAG="latest"; else export DOCKER_TAG="$ABSTRUSE_BRANCH"; fi
+  - docker build -t "keeco/keeco-hub:$DOCKER_TAG" .
+  - docker push keeco/keeco-hub
