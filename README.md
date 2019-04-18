@@ -25,9 +25,13 @@ The central software which orchestrates all the hardware nodes and provides an A
 
 We have a docker container which has all the dependencies installed for the hub. You can use it, if you want an easy, plug'n'play solution.
 
-Run the container with:
+Run the stable container with:
 ```bash
-docker run -dit -v keeco_hub_conf:/opt/keeco-hub/config -p 5000:5000 -p 1883:1883 -p 5353:5353 keeco/keeco-hub
+docker run -dit --name keeco_hub --restart always -v keeco_hub_conf:/opt/keeco-hub/config -p 5000:5000 -p 1883:1883 -p 5353:5353 keeco/keeco-hub
+```
+Run the development container with:
+```bash
+docker run --rm -it -v keeco_hub_dev_conf:/opt/keeco-hub/config -p 5000:5000 -p 1883:1883 -p 5353:5353 keeco/keeco-hub:dev
 ```
 
 The ports used:
