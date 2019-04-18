@@ -15,7 +15,6 @@ deploy:
   - tar -czvf dist.tar.gz -C build .
   - /home/abstruse/deploy.sh "KeecoHub-$ABSTRUSE_BRANCH" "KeecoHub" dist.tar.gz
   - sudo docker login -u $DOCKER_USER -p $DOCKER_PASSWD
-  - if [ "$ABSTRUSE_BRANCH" == "master" ]; then DOCKER_TAG="latest"; else DOCKER_TAG=$(echo $ABSTRUSE_BRANCH | sed -r 's/\//_/g'); fi
-  - docker build -t "keeco/keeco-hub:$DOCKER_TAG" .
-  - docker push "keeco/keeco-hub:$DOCKER_TAG"
+  - docker build -t "keeco/keeco-hub:$(if [ "$ABSTRUSE_BRANCH" == "master" ]; then echo "latest"; else echo $ABSTRUSE_BRANCH | sed -r 's/\//_/g'; fi)" .
+  - docker push "keeco/keeco-hub:$(if [ "$ABSTRUSE_BRANCH" == "master" ]; then echo "latest"; else echo $ABSTRUSE_BRANCH | sed -r 's/\//_/g'; fi)"
   - sudo docker logout
