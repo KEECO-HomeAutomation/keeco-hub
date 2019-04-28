@@ -8,6 +8,7 @@ const updateGroup = (conn, id, options) => {
 					reject(err);
 				} else {
 					let group = conn.getGroup(id);
+					conn.groupSubscription().publish('UPDATED', group);
 					resolve(group);
 				}
 			}

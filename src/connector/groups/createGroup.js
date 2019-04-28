@@ -8,6 +8,7 @@ const createGroup = (conn, options) => {
 					reject(err);
 				} else {
 					let group = { ...options, id: this.lastID };
+					conn.groupSubscription().publish('CREATED', group);
 					resolve(group);
 				}
 			}

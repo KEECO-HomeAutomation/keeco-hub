@@ -26,17 +26,17 @@ type Group {
 
 type GroupData {
 	name: String!
-	value: Int
+	value: Float
 }
 
 input CreateGroupInput {
 	name: String!
-	is_room: Boolean
+	is_room: Boolean!
 }
 
 input UpdateGroupInput {
-	name: String
-	is_room: Boolean
+	name: String!
+	is_room: Boolean!
 }
 
 input UpdateGroupDataInput {
@@ -45,7 +45,7 @@ input UpdateGroupDataInput {
 
 input GroupDataInput {
 	name: String!
-	value: Int!
+	value: Float!
 }
 
 type DeleteGroupPayload {

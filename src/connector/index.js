@@ -29,6 +29,9 @@ import UpdateGroupData from './groups/updateGroupData';
 import AddGroupMember from './groups/addGroupMember';
 import RemoveGroupMember from './groups/removeGroupMember';
 import DeleteGroup from './groups/deleteGroup';
+import GetGroupMembers from './groups/getGroupMembers';
+import GetGroupData from './groups/getGroupData';
+import GroupSubscription from './groups/groupSubscription';
 import GetTopic from './mqtt/getTopic';
 import PublishTopic from './mqtt/publishTopic';
 import SubscribeTopic from './mqtt/subscribeTopic';
@@ -175,6 +178,18 @@ class Connector {
 
 	deleteGroup(id) {
 		return DeleteGroup(this, id);
+	}
+
+	getGroupMembers(id) {
+		return GetGroupMembers(this, id);
+	}
+
+	getGroupData(id) {
+		return GetGroupData(this, id);
+	}
+
+	groupSubscription() {
+		return GroupSubscription(this);
 	}
 
 	/*

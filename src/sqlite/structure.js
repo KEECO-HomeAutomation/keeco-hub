@@ -53,9 +53,9 @@ const structure = `
 
 	CREATE TABLE group_members (
 		id INTEGER PRIMARY KEY NOT NULL,
-		group int NOT NULL,
+		pgroup int NOT NULL,
 		node int NOT NULL,
-		FOREIGN KEY (group) REFERENCES groups(id) ON DELETE CASCADE,
+		FOREIGN KEY (pgroup) REFERENCES groups(id) ON DELETE CASCADE,
 		FOREIGN KEY (node) REFERENCES nodes(id) ON DELETE CASCADE
 	);
 
