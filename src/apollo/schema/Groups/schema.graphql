@@ -1,0 +1,58 @@
+extend type Query {
+	groups: [Group!]
+	getGroup(id: ID!): Group
+}
+
+extend type Mutation {
+	createGroup(input: CreateGroupInput!): Group
+	updateGroup(id: ID!, input: UpdateGroupInput!): Group
+	updateGroupData(id: ID!, input: UpdateGroupDataInput!): Group
+	addGroupMember(id: ID!, nodeID: ID!): Group
+	removeGroupMember(id: ID!, nodeID: ID!): Group
+	deleteGroup(id: ID!): DeleteGroupPayload
+}
+
+extend type Subscription {
+	groupSubscription: GroupSubscription!
+}
+
+type Group {
+	id: ID!
+	name: String!
+	is_room: Boolean!
+	members: [Node!]
+	data: [GroupData!]
+}
+
+type GroupData {
+	name: String!
+	value: Int
+}
+
+input CreateGroupInput {
+	name: String!
+	is_room: Boolean
+}
+
+input UpdateGroupInput {
+	name: String
+	is_room: Boolean
+}
+
+input UpdateGroupDataInput {
+	data: [GroupDataInput!]!
+}
+
+input GroupDataInput {
+	name: String!
+	value: Int!
+}
+
+type DeleteGroupPayload {
+	id: ID!
+}
+
+type GroupSubscription {
+	mutation: MutationType!
+	node: Group!
+}

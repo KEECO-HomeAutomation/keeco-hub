@@ -45,6 +45,20 @@ const structure = `
 		FOREIGN KEY (endpoint) REFERENCES node_endpoints(id) ON DELETE CASCADE
 	);
 
+	CREATE TABLE groups (
+		id INTEGER PRIMARY KEY NOT NULL,
+		name text NOT NULL,
+		is_room tinyint NOT NULL default 0
+	);
+
+	CREATE TABLE group_members (
+		id INTEGER PRIMARY KEY NOT NULL,
+		group int NOT NULL,
+		node int NOT NULL,
+		FOREIGN KEY (group) REFERENCES groups(id) ON DELETE CASCADE,
+		FOREIGN KEY (node) REFERENCES nodes(id) ON DELETE CASCADE
+	);
+
 	/* add default admin account. Credintials: admin-admin */
 	INSERT INTO users (username, password) VALUES ('admin', 'sha1$a3fea30e$1$0b601805f023f82ad83177ba748c18ed87812856');
 `;

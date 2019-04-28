@@ -9,17 +9,12 @@ const resolvers = {
 
 			return ctx.connector.getUsers();
 		},
-		getUser: async (parent, args, ctx) => {
+		getUser: (parent, args, ctx) => {
 			if (!ctx.user) {
 				throw new AuthenticationError();
 			}
 
-			let user = await ctx.connector.getUser(args.id);
-			if (!user) {
-				throw new ApolloError('ID not found', 'ENOENT');
-			} else {
-				return user;
-			}
+			return ctx.connector.getUser(args.id);
 		}
 	},
 	User: {
