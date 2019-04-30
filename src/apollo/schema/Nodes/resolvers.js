@@ -1,4 +1,4 @@
-import { AuthenticationError, ApolloError } from 'apollo-server';
+import { AuthenticationError } from 'apollo-server';
 
 const resolvers = {
 	Query: {

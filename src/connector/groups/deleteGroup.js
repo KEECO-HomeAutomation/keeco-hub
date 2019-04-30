@@ -10,17 +10,15 @@ const deleteGroup = (conn, id) => {
 					if (row.count === 0) {
 						resolve(null);
 					} else {
-						conn.db.get('DELETE FROM groups WHERE id=$id', { $id: id }, err => {
+						conn.db.run('DELETE FROM groups WHERE id=$id', { $id: id }, err => {
 							if (err) {
 								reject(err);
 							} else {
-								conn
-									.groupSubscription()
-									.publish('DELETED', {
-										id,
-										name: row.name,
-										is_room: row.is_room
-									});
+								conn.groupSubscription().publish('DELETED', {
+									id,
+									name: row.name,
+									is_room: row.is_room
+								});
 								resolve({ id });
 							}
 						});
