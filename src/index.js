@@ -34,3 +34,24 @@ connector.init(
 mdns.init(() => {
 	log('MDNS', 'MDNS started answering', 'message');
 });
+
+//handle closing
+const close = () => {
+	process.removeAllListeners();
+
+	log('HUB', 'Shutting down', 'message');
+
+	db.close().then(
+		() => {
+			log('HUB', 'Successfully shut down', 'message');
+			process.exit();
+		},
+		() => {
+			log('HUB', 'Error during shutdown', 'error');
+		}
+	);
+};
+process.on('exit', close);
+process.on('SIGINT', close);
+process.on('SIGUSR1', close);
+process.on('SIGUSR2', close);
