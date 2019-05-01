@@ -9,7 +9,7 @@
     "lint": "eslint 'src/**/*.js'",
     "format": "prettier --write 'src/**/*.js' 'src/**/*.graphql'",
     "start": "nodemon --exec babel-node src/index.js",
-    "build": "babel src -d build"
+    "build": "cross-env NODE_ENV=production babel src -d build"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
     "@babel/node": "^7.2.2",
     "@babel/preset-env": "^7.3.1",
     "babel-plugin-import-graphql": "^2.6.2",
+    "cross-env": "^5.2.0",
     "eslint": "^5.12.1",
     "eslint-config-prettier": "^4.0.0",
     "eslint-plugin-prettier": "^3.0.1",
