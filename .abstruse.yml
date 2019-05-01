@@ -2,6 +2,7 @@ image: nodejs
 branches:
   - master
   - dev
+  - release/*
 matrix:
   - env: SCRIPT=lint
   - env: SCRIPT=test:coverage
@@ -12,8 +13,9 @@ script:
 deploy:
   - npm ci
   - npm run build
+  - cp -t build package.json package-lock.json
   - tar -czvf dist.tar.gz -C build .
-  - /home/abstruse/deploy.sh "KeecoHub-$ABSTRUSE_BRANCH" "KeecoHub" dist.tar.gz
+  - deploy_b2 "KeecoHub-$ABSTRUSE_BRANCH" keeco-hub dist.tar.gz
   - sudo docker login -u $DOCKER_USER -p $DOCKER_PASSWD
   - sudo docker build -t "keeco/keeco-hub:$(if [ "$ABSTRUSE_BRANCH" == "master" ]; then echo "latest"; else echo $ABSTRUSE_BRANCH | sed -r 's/\//_/g'; fi)" .
   - sudo docker push "keeco/keeco-hub:$(if [ "$ABSTRUSE_BRANCH" == "master" ]; then echo "latest"; else echo $ABSTRUSE_BRANCH | sed -r 's/\//_/g'; fi)"
