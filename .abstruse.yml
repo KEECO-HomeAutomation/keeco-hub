@@ -2,7 +2,7 @@ image: nodejs
 branches:
   - master
   - dev
-  - release/*
+  - release/.*
 matrix:
   - env: SCRIPT=lint
   - env: SCRIPT=test:coverage
