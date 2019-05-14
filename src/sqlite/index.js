@@ -59,6 +59,21 @@ class Db {
 		);
 	}
 
+	close() {
+		return new Promise((resolve, reject) => {
+			log('SQLite', 'Closing database', 'message');
+			this.db.close(error => {
+				if (error) {
+					log('SQLite', 'Failed to close database. Error: ' + error, 'error');
+					reject(error);
+				} else {
+					log('SQLite', 'Database closed', 'message');
+					resolve();
+				}
+			});
+		});
+	}
+
 	run(sql, param, cb) {
 		this.db.run(sql, param, cb);
 	}

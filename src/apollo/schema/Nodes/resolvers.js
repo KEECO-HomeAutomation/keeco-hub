@@ -1,4 +1,4 @@
-import { AuthenticationError, ApolloError } from 'apollo-server';
+import { AuthenticationError } from 'apollo-server';
 
 const resolvers = {
 	Query: {
@@ -9,17 +9,12 @@ const resolvers = {
 
 			return ctx.connector.getNodes();
 		},
-		getNode: async (parent, args, ctx) => {
+		getNode: (parent, args, ctx) => {
 			if (!ctx.user) {
 				throw new AuthenticationError();
 			}
 
-			let node = await ctx.connector.getNode(args.id);
-			if (!node) {
-				throw new ApolloError('ID not found', 'ENOENT');
-			} else {
-				return node;
-			}
+			return ctx.connector.getNode(args.id);
 		},
 		getMapping: (parent, args, ctx) => {
 			if (!ctx.user) {

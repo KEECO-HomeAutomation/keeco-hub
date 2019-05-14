@@ -21,6 +21,17 @@ import UpdateNode from './nodes/updateNode';
 import UpdateTemplateData from './nodes/updateTemplateData';
 import DeleteNode from './nodes/deleteNode';
 import NodeSubscription from './nodes/nodeSubscription';
+import GetGroups from './groups/getGroups';
+import GetGroup from './groups/getGroup';
+import CreateGroup from './groups/createGroup';
+import UpdateGroup from './groups/updateGroup';
+import UpdateGroupData from './groups/updateGroupData';
+import AddGroupMember from './groups/addGroupMember';
+import RemoveGroupMember from './groups/removeGroupMember';
+import DeleteGroup from './groups/deleteGroup';
+import GetGroupMembers from './groups/getGroupMembers';
+import GetGroupData from './groups/getGroupData';
+import GroupSubscription from './groups/groupSubscription';
 import GetTopic from './mqtt/getTopic';
 import PublishTopic from './mqtt/publishTopic';
 import SubscribeTopic from './mqtt/subscribeTopic';
@@ -132,6 +143,53 @@ class Connector {
 
 	nodeSubscription() {
 		return NodeSubscription(this);
+	}
+
+	/*
+	 * groups
+	 */
+	getGroups() {
+		return GetGroups(this);
+	}
+
+	getGroup(id) {
+		return GetGroup(this, id);
+	}
+
+	createGroup(options) {
+		return CreateGroup(this, options);
+	}
+
+	updateGroup(id, options) {
+		return UpdateGroup(this, id, options);
+	}
+
+	updateGroupData(id, options) {
+		return UpdateGroupData(this, id, options);
+	}
+
+	addGroupMember(id, nodeID) {
+		return AddGroupMember(this, id, nodeID);
+	}
+
+	removeGroupMember(id, nodeID) {
+		return RemoveGroupMember(this, id, nodeID);
+	}
+
+	deleteGroup(id) {
+		return DeleteGroup(this, id);
+	}
+
+	getGroupMembers(id) {
+		return GetGroupMembers(this, id);
+	}
+
+	getGroupData(id) {
+		return GetGroupData(this, id);
+	}
+
+	groupSubscription() {
+		return GroupSubscription(this);
 	}
 
 	/*
