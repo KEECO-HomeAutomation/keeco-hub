@@ -1,9 +1,10 @@
 /**
- * @module ports
  * @author Bence László <bencelaszlo@protonmail.com>
+ * @module utils/ports
  * @summary Store configured ports.
  */
-module.exports = {
-	gqlServer: 5000,
-	mqttServer: 1883
-};
+
+const gqlServerPort = 5000; /** @constant {number} gqlServer - GraphQL server port */
+const mqttServerPort = 1883; /** @constant {number} mqttServer - MQTT server port */
+
+module.exports = { gqlServerPort, mqttServerPort };
