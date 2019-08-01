@@ -5,15 +5,16 @@ import connector from './connector';
 import mdns from './mdns';
 
 import { log } from './utils';
+import ports from './utils/ports.config';
 
 log('HUB', 'Keeco-hub is starting up', 'message');
 
-gqlServer.listen(5000).then(() => {
-	log('Apollo', 'GraphQL server started at port 5000', 'message');
+gqlServer.listen(ports.gqlServer).then(() => {
+	log('Apollo', 'GraphQL server started at port ' + ports.gqlServer, 'message');
 });
 
-mqttServer.listen(1883, () => {
-	log('Aedes', 'MQTT server started at port 1883', 'message');
+mqttServer.listen(ports.mqttServer, () => {
+	log('Aedes', 'MQTT server started at port ' + ports.mqttServer, 'message');
 });
 
 db.init('database.sqlite', () => {
@@ -35,7 +36,11 @@ mdns.init(() => {
 	log('MDNS', 'MDNS started answering', 'message');
 });
 
-//handle closing
+/**
+ * @function close
+ * @author Gergő Fándly <gergo@systemtest.tk>
+ * @summary Closes down the webserver. Before the shutdown, it removes its listeners and disconnects from the database.
+ */
 const close = () => {
 	process.removeAllListeners();
 
@@ -51,6 +56,7 @@ const close = () => {
 		}
 	);
 };
+
 process.on('exit', close);
 process.on('SIGINT', close);
 process.on('SIGUSR1', close);
