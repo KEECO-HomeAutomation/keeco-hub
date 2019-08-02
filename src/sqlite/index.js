@@ -1,7 +1,7 @@
 import SQLite from 'sqlite3';
 import chalk from 'chalk';
 
-import { log, isDev, getConfigFile } from '../utils';
+import { log, getConfigFile } from '../utils';
 
 import populate from './populate';
 
@@ -29,7 +29,7 @@ class Db {
 								() => {
 									log('SQLite', 'Database successfully populated');
 									//turn on foreign keys
-									this.db.exec('PRAGMA foreign_keys=ON').then(resolve, reject);
+									this.exec('PRAGMA foreign_keys=ON').then(resolve, reject);
 								},
 								error => {
 									log(
@@ -58,7 +58,7 @@ class Db {
 						reject(error);
 					} else {
 						populate(db).then(() => {
-							this.db.exec('PRAGMA foreign_keys=ON').then(resolve, reject);
+							this.exec('PRAGMA foreign_keys=ON').then(resolve, reject);
 						}, reject);
 					}
 				}
@@ -66,18 +66,29 @@ class Db {
 		});
 	}
 
-	close() {
+	//close database
+	close(logging = true) {
 		return new Promise((resolve, reject) => {
 			if (this.db === undefined) {
 				resolve();
 			} else {
-				log('SQLite', 'Closing database', 'message');
+				if (logging) {
+					log('SQLite', 'Closing database', 'message');
+				}
 				this.db.close(error => {
 					if (error) {
-						log('SQLite', 'Failed to close database. Error: ' + error, 'error');
+						if (logging) {
+							log(
+								'SQLite',
+								'Failed to close database. Error: ' + error,
+								'error'
+							);
+						}
 						reject(error);
 					} else {
-						log('SQLite', 'Database closed', 'message');
+						if (logging) {
+							log('SQLite', 'Database closed', 'message');
+						}
 						this.db = undefined;
 						resolve();
 					}
