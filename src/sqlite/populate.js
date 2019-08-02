@@ -1,7 +1,7 @@
 import structure from './structure';
 
-const populate = (db, callback) => {
-	db.exec(structure, callback);
+const populate = db => {
+	return db.exec(structure);
 };
 
 export default populate;
