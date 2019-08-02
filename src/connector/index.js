@@ -37,11 +37,13 @@ import PublishTopic from './mqtt/publishTopic';
 import SubscribeTopic from './mqtt/subscribeTopic';
 
 class Connector {
-	init(options, callback) {
-		this.db = options.db;
-		this.mqtt = options.mqtt;
-		this.gql = options.gql;
-		callback();
+	init(options) {
+		return new Promise(resolve => {
+			this.db = options.db;
+			this.mqtt = options.mqtt;
+			this.gql = options.gql;
+			resolve();
+		});
 	}
 
 	/*
