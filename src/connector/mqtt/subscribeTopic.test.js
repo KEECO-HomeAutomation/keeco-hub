@@ -11,12 +11,12 @@ describe('Subscribe to topic', () => {
 		conn = {
 			mqtt: {
 				aedes: {
-					subscribe: jest.fn((topic, fn, cb) => {
-						cb();
+					subscribe: jest.fn((topic, fn) => {
 						fn(
 							{ topic: 'topic', payload: Buffer.from('payload', 'UTF-8') },
 							subscribeCb
 						);
+						return Promise.resolve();
 					})
 				}
 			},
@@ -33,38 +33,45 @@ describe('Subscribe to topic', () => {
 		conn = null;
 	});
 
-	test('Should call MQTT subscribe', () => {
-		SubscribeTopic(conn, 'topic');
-		expect(conn.mqtt.aedes.subscribe).toBeCalledTimes(1);
-		expect(conn.mqtt.aedes.subscribe).toBeCalledWith(
-			'topic',
-			expect.any(Function),
-			expect.any(Function)
-		);
-	});
-
-	test('When received packet should call gql.pubsub.publish', () => {
-		uuid.v4.mockReturnValue('uuid');
-		SubscribeTopic(conn, 'topic');
-		expect(conn.gql.pubsub.publish).toBeCalledTimes(1);
-		expect(conn.gql.pubsub.publish).toBeCalledWith('mqtt_topic_uuid', {
-			subscribeTopic: {
-				topic: 'topic',
-				payload: 'payload'
-			}
+	test('Should call MQTT subscribe', done => {
+		SubscribeTopic(conn, 'topic').then(() => {
+			expect(conn.mqtt.aedes.subscribe).toBeCalledTimes(1);
+			expect(conn.mqtt.aedes.subscribe).toBeCalledWith(
+				'topic',
+				expect.any(Function)
+			);
+			done();
 		});
 	});
 
-	test('When received packet should call callback', () => {
-		SubscribeTopic(conn, 'topic');
-		expect(subscribeCb).toBeCalledTimes(1);
+	test('When received packet should call gql.pubsub.publish', done => {
+		uuid.v4.mockReturnValue('uuid');
+		SubscribeTopic(conn, 'topic').then(() => {
+			expect(conn.gql.pubsub.publish).toBeCalledTimes(1);
+			expect(conn.gql.pubsub.publish).toBeCalledWith('mqtt_topic_uuid', {
+				subscribeTopic: {
+					topic: 'topic',
+					payload: 'payload'
+				}
+			});
+			done();
+		});
 	});
 
-	test('Should call asyncIterator function of gql.pubsub', () => {
+	test('When received packet should call callback', done => {
+		SubscribeTopic(conn, 'topic').then(() => {
+			expect(subscribeCb).toBeCalledTimes(1);
+			done();
+		});
+	});
+
+	test('Should call asyncIterator function of gql.pubsub', done => {
 		uuid.v4.mockReturnValue('uuid');
-		SubscribeTopic(conn, 'topic');
-		expect(conn.gql.pubsub.asyncIterator).toBeCalledTimes(1);
-		expect(conn.gql.pubsub.asyncIterator).toBeCalledWith(['mqtt_topic_uuid']);
+		SubscribeTopic(conn, 'topic').then(() => {
+			expect(conn.gql.pubsub.asyncIterator).toBeCalledTimes(1);
+			expect(conn.gql.pubsub.asyncIterator).toBeCalledWith(['mqtt_topic_uuid']);
+			done();
+		});
 	});
 
 	test('Should resolve to asyncIterator', () => {
