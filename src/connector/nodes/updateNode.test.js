@@ -1,51 +1,26 @@
-import SQLite from 'sqlite3';
-import populate from '../../sqlite/populate';
+import db from '../../sqlite';
 
 import UpdateNode from './updateNode';
 
 describe('Update node in real database', () => {
 	var mockedPublish = null;
 	var conn = null;
-	beforeEach(done => {
-		mockedPublish = jest.fn();
-		conn = {
-			db: new SQLite.Database(
-				':memory:',
-				SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
-				error => {
-					if (!error) {
-						populate(conn.db, error => {
-							if (!error) {
-								conn.db.exec('PRAGMA foreign_keys=ON');
+	beforeEach(() =>
+		db.initTest().then(() => {
+			mockedPublish = jest.fn();
+			conn = {
+				db,
+				nodeSubscription: () => ({
+					publish: mockedPublish
+				})
+			};
 
-								//add sample nodes
-								conn.db.exec(
-									'INSERT INTO nodes (uuid, name) VALUES ("uuid1", "node1"),("uuid2", "node2");',
-									error => {
-										if (!error) {
-											done();
-										}
-									}
-								);
-							}
-						});
-					}
-				}
-			),
-			nodeSubscription: () => ({
-				publish: mockedPublish
-			})
-		};
-	}, 10000);
-	afterEach(done => {
-		conn.db.close(error => {
-			if (!error) {
-				conn = null;
-				mockedPublish = null;
-				done();
-			}
-		});
-	}, 10000);
+			return db.exec(
+				'INSERT INTO nodes (uuid, name) VALUES ("uuid1", "node1"),("uuid2", "node2");'
+			);
+		})
+	);
+	afterEach(() => db.close(false));
 
 	test('Should update the database for node1', done => {
 		const customConn = {
@@ -53,20 +28,16 @@ describe('Update node in real database', () => {
 			getNode: jest.fn()
 		};
 		UpdateNode(customConn, 1, { name: 'newName' }).then(() => {
-			conn.db.get(
-				'SELECT id, name, uuid FROM nodes WHERE id=$id',
-				{ $id: 1 },
-				(err, row) => {
-					if (!err) {
-						expect(row).toEqual({
-							id: 1,
-							name: 'newName',
-							uuid: 'uuid1'
-						});
-						done();
-					}
-				}
-			);
+			conn.db
+				.get('SELECT id, name, uuid FROM nodes WHERE id=$id', { $id: 1 })
+				.then(row => {
+					expect(row).toEqual({
+						id: 1,
+						name: 'newName',
+						uuid: 'uuid1'
+					});
+					done();
+				});
 		});
 	});
 
@@ -76,20 +47,16 @@ describe('Update node in real database', () => {
 			getNode: jest.fn()
 		};
 		UpdateNode(customConn, 1, { name: 'newName' }).then(() => {
-			conn.db.get(
-				'SELECT id, name, uuid FROM nodes WHERE id=$id',
-				{ $id: 2 },
-				(err, row) => {
-					if (!err) {
-						expect(row).toEqual({
-							id: 2,
-							name: 'node2',
-							uuid: 'uuid2'
-						});
-						done();
-					}
-				}
-			);
+			conn.db
+				.get('SELECT id, name, uuid FROM nodes WHERE id=$id', { $id: 2 })
+				.then(row => {
+					expect(row).toEqual({
+						id: 2,
+						name: 'node2',
+						uuid: 'uuid2'
+					});
+					done();
+				});
 		});
 	});
 
@@ -122,7 +89,7 @@ describe('Update node in real database', () => {
 describe('Update node in always-failing database', () => {
 	test('db.run will fail', () => {
 		const db = {
-			run: jest.fn((sql, props, cb) => cb('DB Error at run'))
+			run: jest.fn(() => Promise.reject('DB Error at run'))
 		};
 		expect(UpdateNode({ db }, 1, { name: 'newName' })).rejects.toBe(
 			'DB Error at run'

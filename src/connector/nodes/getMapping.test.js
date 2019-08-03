@@ -1,5 +1,4 @@
-import SQLite from 'sqlite3';
-import populate from '../../sqlite/populate';
+import db from '../../sqlite';
 
 import GetMapping from './getMapping';
 
@@ -55,46 +54,18 @@ const tests = [
 ];
 
 describe('Get mapping from real database', () => {
-	var db;
-	beforeEach(done => {
-		db = new SQLite.Database(
-			':memory:',
-			SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
-			error => {
-				if (!error) {
-					populate(db, error => {
-						if (!error) {
-							db.exec('PRAGMA foreign_keys=ON');
-
-							//add base data
-							db.exec(
-								`INSERT INTO nodes (uuid, name) VALUES ("uuid1", "name1");
-								INSERT INTO node_templates (node, name) VALUES (1, "switch"),(1, "lamp");
-								INSERT INTO node_endpoints (node, name, output, range) VALUES (1, "ep_1_switch_on", 1, "0,1"),
-								(1, "ep_1_lamp_on", 1, "0,1"),(1, "ep_1_lamp_r", 1, "0:255"),(1, "ep_1_lamp_g", 1, "0:255"),
-								(1, "ep_1_lamp_b", 1, "0:255"),(1, "ep_1_lamp_dim", 1, "0:255");
-								INSERT INTO node_template_mappings (node_template, name, endpoint) VALUES (1, "on", 1),
-								(2, "on", 2),(2, "r", 3),(2, "g", 4),(2, "b", 5),(2, "dim", 6);`,
-								error => {
-									if (!error) {
-										done();
-									}
-								}
-							);
-						}
-					});
-				}
-			}
-		);
-	}, 10000);
-	afterEach(done => {
-		db.close(error => {
-			if (!error) {
-				db = null;
-				done();
-			}
-		});
-	}, 10000);
+	beforeEach(() =>
+		db.initTest().then(() => {
+			return db.exec(`INSERT INTO nodes (uuid, name) VALUES ("uuid1", "name1");
+							INSERT INTO node_templates (node, name) VALUES (1, "switch"),(1, "lamp");
+							INSERT INTO node_endpoints (node, name, output, range) VALUES (1, "ep_1_switch_on", 1, "0,1"),
+							(1, "ep_1_lamp_on", 1, "0,1"),(1, "ep_1_lamp_r", 1, "0:255"),(1, "ep_1_lamp_g", 1, "0:255"),
+							(1, "ep_1_lamp_b", 1, "0:255"),(1, "ep_1_lamp_dim", 1, "0:255");
+							INSERT INTO node_template_mappings (node_template, name, endpoint) VALUES (1, "on", 1),
+							(2, "on", 2),(2, "r", 3),(2, "g", 4),(2, "b", 5),(2, "dim", 6);`);
+		})
+	);
+	afterEach(() => db.close(false));
 
 	test('Should resolve to null when templateID not found', () => {
 		expect(GetMapping({ db }, 'uuid1', 500, 'on')).resolves.toBe(null);
@@ -132,7 +103,7 @@ describe('Get mapping from real database', () => {
 describe('Get mapping from always-failing database', () => {
 	test('db.get will fail', () => {
 		const db = {
-			get: jest.fn((sql, props, cb) => cb('DB Error at get'))
+			get: jest.fn(() => Promise.reject('DB Error at get'))
 		};
 		expect(GetMapping({ db }, 'uuid1', 1, 'on')).rejects.toBe(
 			'DB Error at get'

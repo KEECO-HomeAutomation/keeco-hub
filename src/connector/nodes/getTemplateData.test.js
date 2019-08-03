@@ -1,6 +1,5 @@
-import SQLite from 'sqlite3';
+import db from '../../sqlite';
 import MQTTStore from 'mqtt-store';
-import populate from '../../sqlite/populate';
 
 import GetTemplateData from './getTemplateData';
 
@@ -42,71 +41,41 @@ const tests = [
 ];
 
 describe('Get template data from real database', () => {
-	var db = null;
-	var mqtt = null;
-	beforeEach(done => {
-		mqtt = { store: new MQTTStore() };
-		db = new SQLite.Database(
-			':memory:',
-			SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
-			error => {
-				if (!error) {
-					populate(db, error => {
-						if (!error) {
-							db.exec('PRAGMA foreign_keys=ON');
+	var conn = null;
+	beforeEach(() =>
+		db.initTest().then(() => {
+			conn = {
+				db,
+				mqtt: { store: new MQTTStore() }
+			};
+			conn.mqtt.store.put('nodes/uuid1/ep_1_switch_on', 1);
+			conn.mqtt.store.put('nodes/uuid1/ep_1_lamp_on', 0);
+			conn.mqtt.store.put('nodes/uuid1/ep_1_lamp_r', 230);
+			conn.mqtt.store.put('nodes/uuid1/ep_1_lamp_g', 200);
+			conn.mqtt.store.put('nodes/uuid1/ep_1_lamp_b', 0);
+			conn.mqtt.store.put('nodes/uuid1/ep_1_lamp_dim', 100);
+			conn.mqtt.store.put('nodes/uuid1/ep_1_thermostat_temperature', 23.5);
 
-							//add sample nodes
-							db.exec(
-								`INSERT INTO nodes (uuid, name) VALUES ("uuid1", "name1"),("uuid2", "name2");
-								INSERT INTO node_templates (node, name) VALUES (1, "switch"),(1, "lamp"),(1, "thermostat");
-								INSERT INTO node_endpoints (node, name, output, range) VALUES (1, "ep_1_switch_on", 1, "0,1"),
-								(1, "ep_1_lamp_on", 1, "0,1"),(1, "ep_1_lamp_r", 1, "0:255"),(1, "ep_1_lamp_g", 1, "0:255"),
-								(1, "ep_1_lamp_b", 1, "0:255"),(1, "ep_1_lamp_dim", 1, "0:255"),
-								(1, "ep_1_thermostat_temperature", 0, "-30:70");
-								INSERT INTO node_template_mappings (node_template, name, endpoint) VALUES (1, "on", 1),
-								(2, "on", 2),(2, "r", 3),(2, "g", 4),(2, "b", 5),(2, "dim", 6),(3, "temperature", 7);`,
-								error => {
-									if (!error) {
-										//add fake values to mqtt store
-										mqtt.store.put('nodes/uuid1/ep_1_switch_on', 1);
-										mqtt.store.put('nodes/uuid1/ep_1_lamp_on', 0);
-										mqtt.store.put('nodes/uuid1/ep_1_lamp_r', 230);
-										mqtt.store.put('nodes/uuid1/ep_1_lamp_g', 200);
-										mqtt.store.put('nodes/uuid1/ep_1_lamp_b', 0);
-										mqtt.store.put('nodes/uuid1/ep_1_lamp_dim', 100);
-										mqtt.store.put(
-											'nodes/uuid1/ep_1_thermostat_temperature',
-											23.5
-										);
-
-										done();
-									}
-								}
-							);
-						}
-					});
-				}
-			}
-		);
-	}, 10000);
-	afterEach(done => {
-		mqtt = null;
-		db.close(error => {
-			if (!error) {
-				db = null;
-				done();
-			}
-		});
-	}, 10000);
+			return db.exec(`INSERT INTO nodes (uuid, name) VALUES ("uuid1", "name1"),("uuid2", "name2");
+							INSERT INTO node_templates (node, name) VALUES (1, "switch"),(1, "lamp"),(1, "thermostat");
+							INSERT INTO node_endpoints (node, name, output, range) VALUES (1, "ep_1_switch_on", 1, "0,1"),
+							(1, "ep_1_lamp_on", 1, "0,1"),(1, "ep_1_lamp_r", 1, "0:255"),(1, "ep_1_lamp_g", 1, "0:255"),
+							(1, "ep_1_lamp_b", 1, "0:255"),(1, "ep_1_lamp_dim", 1, "0:255"),
+							(1, "ep_1_thermostat_temperature", 0, "-30:70");
+							INSERT INTO node_template_mappings (node_template, name, endpoint) VALUES (1, "on", 1),
+							(2, "on", 2),(2, "r", 3),(2, "g", 4),(2, "b", 5),(2, "dim", 6),(3, "temperature", 7);`);
+		})
+	);
+	afterEach(() => db.close(false));
 
 	test('Should resolve to null if template does not exist', () => {
-		expect(GetTemplateData({ db, mqtt }, 400, 'switch')).resolves.toBe(null);
+		expect(GetTemplateData(conn, 400, 'switch')).resolves.toBe(null);
 	});
 
 	test('Should resolve to null if template name is invalid', () => {
-		expect(
-			GetTemplateData({ db, mqtt }, 1, 'NotExistingTemplateName')
-		).resolves.toBe(null);
+		expect(GetTemplateData(conn, 1, 'NotExistingTemplateName')).resolves.toBe(
+			null
+		);
 	});
 
 	describe('Test output types', () => {
@@ -118,9 +87,8 @@ describe('Get template data from real database', () => {
 					testCase.input.name +
 					' type',
 				done => {
-					const conn = {
-						db,
-						mqtt,
+					const customConn = {
+						...conn,
 						getMapping: jest.fn((nodeUUID, templateID, name) => {
 							let map = '';
 							switch (templateID) {
@@ -139,15 +107,17 @@ describe('Get template data from real database', () => {
 							return Promise.resolve('nodes/' + nodeUUID + '/' + map);
 						})
 					};
-					GetTemplateData(conn, testCase.input.id, testCase.input.name).then(
-						resp => {
-							expect(resp).toEqual(testCase.expect);
-							expect(conn.getMapping).toBeCalledTimes(
-								Object.keys(testCase.expect).length - 1
-							);
-							done();
-						}
-					);
+					GetTemplateData(
+						customConn,
+						testCase.input.id,
+						testCase.input.name
+					).then(resp => {
+						expect(resp).toEqual(testCase.expect);
+						expect(customConn.getMapping).toBeCalledTimes(
+							Object.keys(testCase.expect).length - 1
+						);
+						done();
+					});
 				}
 			);
 		});
@@ -157,7 +127,7 @@ describe('Get template data from real database', () => {
 describe('Get template data from always-failing database', () => {
 	test('db.get will fail', () => {
 		const db = {
-			get: jest.fn((sql, props, cb) => cb('DB Error at get'))
+			get: jest.fn(() => Promise.reject('DB Error at get'))
 		};
 		expect(GetTemplateData({ db }, 1, 'switch')).rejects.toBe(
 			'DB Error at get'
