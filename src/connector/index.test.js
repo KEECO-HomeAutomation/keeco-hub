@@ -111,10 +111,9 @@ jest.mock('./mqtt/subscribeTopic', () =>
 import Connector from './index';
 
 describe('Testing main connector', () => {
-	test('Callback should be called when init finished', () => {
+	test('init should resolve', () => {
 		const cb = jest.fn();
-		Connector.init({ db: null, mqtt: null, gql: null }, cb);
-		expect(cb).toBeCalled();
+		expect(Connector.init({ db: null, mqtt: null, gql: null })).resolves.toBe(undefined);
 	});
 
 	describe('Each child function should call a submodule', () => {

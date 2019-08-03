@@ -1,20 +1,14 @@
 const getGroup = (conn, id) => {
 	return new Promise((resolve, reject) => {
-		conn.db.get(
-			'SELECT id, name, is_room FROM groups WHERE id=$id',
-			{ $id: id },
-			(err, row) => {
-				if (err) {
-					reject(err);
+		conn.db
+			.get('SELECT id, name, is_room FROM groups WHERE id=$id', { $id: id })
+			.then(row => {
+				if (row) {
+					resolve(row);
 				} else {
-					if (row) {
-						resolve(row);
-					} else {
-						resolve(null);
-					}
+					resolve(null);
 				}
-			}
-		);
+			}, reject);
 	});
 };
 
