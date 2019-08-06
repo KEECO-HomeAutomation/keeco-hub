@@ -4,7 +4,8 @@
  * @summary Store configured ports.
  */
 
-const gqlServerPort = 5000; /** @constant {number} gqlServer - GraphQL server port */
-const mqttServerPort = 1883; /** @constant {number} mqttServer - MQTT server port */
+const gqlServerPort = 5000; /** @constant {number} gqlServerPort - GraphQL server port */
+const mqttServerPort = 1883; /** @constant {number} mqttServerPort - MQTT server port */
+const httpServerPort = 8080; /** @constant {number} httpServerPort - HTTP server port */
 
-module.exports = { gqlServerPort, mqttServerPort };
+module.exports = { gqlServerPort, mqttServerPort, httpServerPort };

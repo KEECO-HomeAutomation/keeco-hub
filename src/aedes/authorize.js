@@ -1,5 +1,18 @@
 import { log } from '../utils';
 
+/**
+ * @author Gergő Fándly <gergo@systemtest.tk>
+ * @module aedas/authorize
+ */
+
+/**
+ * @author Gergő Fándly <gergo@systemtest.tk>
+ * @function publish
+ * @param {*} client
+ * @param {*} packet
+ * @param {callback} callback - A callback function.
+ * @summary Publish to a MQTT topic.
+ */
 export const publish = (client, packet, callback) => {
 	if (!client) {
 		//authorize publish from null clients
@@ -27,6 +40,14 @@ export const publish = (client, packet, callback) => {
 	}
 };
 
+/**
+ * @author Gergő Fándly <gergo@systemtest.tk>
+ * @function subscribe
+ * @param {*} client
+ * @param {*} sub
+ * @param {callback} callback - A callback function.
+ * @summary Subscribe to a MQTT topic.
+ */
 export const subscribe = (client, sub, callback) => {
 	if (!client) {
 		//authorize subscribe from null clients

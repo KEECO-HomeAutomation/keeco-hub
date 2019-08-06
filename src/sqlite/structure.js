@@ -1,3 +1,9 @@
+/**
+ * @author Gergő Fándly <gergo@systemtest.tk>
+ * @module sqllite/structure
+ * @summary The DDL script of the SQLLite database.
+ */
+
 const structure = `
 	CREATE TABLE users (
 		id INTEGER PRIMARY KEY NOT NULL,

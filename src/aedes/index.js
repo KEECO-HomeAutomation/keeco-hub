@@ -7,6 +7,12 @@ import connector from '../connector';
 import authenticate from './authenticate';
 import * as authorize from './authorize';
 
+/**
+ * @author Gergő Fándly <gergo@systemtest.tk>
+ * @module aedas/index
+ * @summary It provides authentication and authorization functions.
+ */
+
 const aedes = new Aedes();
 const server = net.createServer(aedes.handle);
 
@@ -22,10 +28,8 @@ aedes.on('publish', (packet, client) => {
 	store.put(packet.topic, packet.payload.toString('utf-8'));
 });
 
-//set authentication function
 aedes.authenticate = authenticate;
 
-//set authorization functions
 aedes.authorizePublish = authorize.publish;
 aedes.authorizeSubscribe = authorize.subscribe;
 

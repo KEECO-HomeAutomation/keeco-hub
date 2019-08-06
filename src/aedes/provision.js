@@ -1,5 +1,18 @@
 import * as yup from 'yup';
 
+/**
+ * @author Gergő Fándly <gergo@systemtest.tk>
+ * @module aedes/provision
+ * @summary TODO
+ */
+
+/**
+ * @author Gergő Fándly <gergo@systemtest.tk>
+ * @function provision
+ * @param {*} conn
+ * @param {*} prov
+ * @summary Provison.
+ */
 const provision = (conn, prov) => {
 	return new Promise((resolve, reject) => {
 		//check if JSON is OK
@@ -41,6 +54,14 @@ const provision = (conn, prov) => {
 	});
 };
 
+/**
+ * @author Gergő Fándly <gergo@systemtest.tk>
+ * @function addNode
+ * @param {*} conn
+ * @param {*} prov
+ * @param {function} callback - A callback function.
+ * @summary Add node.
+ */
 const addNode = (conn, prov, callback) => {
 	//insert node
 	conn.db.run(

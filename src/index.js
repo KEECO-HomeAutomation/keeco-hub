@@ -5,22 +5,30 @@ import connector from './connector';
 import mdns from './mdns';
 
 import { log } from './utils';
-import  ports from './utils/ports.config';
+import ports from './utils/ports.config';
 
 /**
  * @author Gergő Fándly <gergo@systemtest.tk>
  * @module index
- * @summary It handles the start and the shutdown of the webserver.
-*/
+ * @summary Handle the start and the shutdown of the webserver.
+ */
 
 log('HUB', 'Keeco-hub is starting up', 'message');
 
 gqlServer.listen(ports.gqlServerPort).then(() => {
-	log('Apollo', 'GraphQL server started at port ' + ports.gqlServerPort, 'message');
+	log(
+		'Apollo',
+		'GraphQL server started at port ' + ports.gqlServerPort,
+		'message'
+	);
 });
 
 mqttServer.listen(ports.mqttServerPort, () => {
-	log('Aedes', 'MQTT server started at port ' + ports.mqttServerPort, 'message');
+	log(
+		'Aedes',
+		'MQTT server started at port ' + ports.mqttServerPort,
+		'message'
+	);
 });
 
 db.init('database.sqlite', () => {
@@ -45,7 +53,7 @@ mdns.init(() => {
 /**
  * @author Gergő Fándly <gergo@systemtest.tk>
  * @function close
- * @summary Closes down the webserver. Before the shutdown, it removes its listeners and disconnects from the database.
+ * @summary Close down the webserver. Before the shutdown, remove its listeners and disconnect from the database.
  */
 const close = () => {
 	process.removeAllListeners();

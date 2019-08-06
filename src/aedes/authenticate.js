@@ -2,8 +2,22 @@ import connector from '../connector';
 import provision from './provision';
 import { log, isDev } from '../utils';
 
+/**
+ * @author Gergő Fándly <gergo@systemtest.tk>
+ * @module aedas/authenticate
+ */
+
+/**
+ * @author Gergő Fándly <gergo@systemtest.tk>
+ * @function authenticate
+ * @param {*} client - Authenticator client.
+ * @param {string} username - Username of the user.
+ * @param {*} password - Password of the user.
+ * @param {callback} callback - callback
+ * @summary Authenticate user with password.
+ * If the username is not set, it fails. If it is running on a development environment and the user's username and the user's password is 'development', then it logs in without provision.
+ */
 const authenticate = (client, username, password, callback) => {
-	//if no username is set, automatically fail
 	if (!username) {
 		log('Aedes', 'Connection with no username set', 'warning');
 		let error = new Error('No username set');
@@ -12,14 +26,11 @@ const authenticate = (client, username, password, callback) => {
 		return;
 	}
 
-	//if username is development and password is development, then log user in without provision
 	if (isDev() && username == 'development' && password == 'development') {
 		log('Aedes', 'MQTT development user attached');
 
-		//attach uuid to client
 		client.uuid = 'development';
 
-		//call callback
 		callback(null, true);
 		return;
 	}
@@ -58,10 +69,8 @@ const authenticate = (client, username, password, callback) => {
 				log('Aedes', 'Node connected');
 			}
 
-			//attach uuid to client
 			client.uuid = uuid;
 
-			//call callback
 			callback(null, true);
 			return;
 		},
