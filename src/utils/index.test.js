@@ -1,6 +1,9 @@
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
+
+jest.mock('fs');
+
 import { log, isDev, getConfigFile } from './index';
 
 describe('utils', () => {
@@ -75,29 +78,31 @@ describe('utils', () => {
 	});
 
 	describe('getConfigFile', () => {
+		beforeEach(() => {
+			jest.resetAllMocks();
+		});
+
 		test('Should check if config dir exists', () => {
-			fs.existsSync = jest.fn().mockReturnValue(true);
+			fs.existsSync.mockReturnValue(true);
 			getConfigFile('asd');
 			expect(fs.existsSync).toBeCalled();
 		});
 
 		test('Should create config dir if it does not exist', () => {
-			fs.existsSync = jest.fn().mockReturnValue(false);
-			fs.mkdirSync = jest.fn();
+			fs.existsSync.mockReturnValue(false);
 			getConfigFile('asd');
 			expect(fs.mkdirSync).toBeCalledTimes(1);
 			expect(fs.mkdirSync).toBeCalledWith(path.join(process.cwd(), 'config'));
 		});
 
 		test('If config dir exists, should not create it', () => {
-			fs.existsSync = jest.fn().mockReturnValue(true);
-			fs.mkdirSync = jest.fn();
+			fs.existsSync.mockReturnValue(true);
 			getConfigFile('asd');
 			expect(fs.mkdirSync).not.toBeCalled();
 		});
 
 		test('It should return an object with a path and the exists switch', () => {
-			fs.existsSync = jest.fn().mockReturnValue(true);
+			fs.existsSync.mockReturnValue(true);
 			expect(getConfigFile('config.conf')).toMatchObject({
 				path: path.join(process.cwd(), 'config', 'config.conf'),
 				exists: true
@@ -105,10 +110,7 @@ describe('utils', () => {
 		});
 
 		test('Shoukd set exists prop accordingly', () => {
-			fs.existsSync = jest
-				.fn()
-				.mockReturnValueOnce(true)
-				.mockReturnValue(false);
+			fs.existsSync.mockReturnValueOnce(true).mockReturnValue(false);
 			expect(getConfigFile('config.conf')).toMatchObject({
 				path: path.join(process.cwd(), 'config', 'config.conf'),
 				exists: false
