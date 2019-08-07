@@ -56,14 +56,14 @@ export const isDev = () => {
  * @returns {{path: string, exists: boolean}} configFile
  */
 export const getConfigFile = file => {
-	let path = path.join(process.cwd(), 'config', file);
+	let filepath = path.join(process.cwd(), 'config', file);
 
 	//check if config folder exists. If not, create
 	if (!fs.existsSync(path.join(process.cwd(), 'config'))) {
 		fs.mkdirSync(path.join(process.cwd(), 'config'));
 	}
 
-	let exists = fs.existsSync(path.join(process.cwd(), 'config', file));
+	let exists = fs.existsSync(filepath);
 
-	return { path, exists };
+	return { path: filepath, exists };
 };
