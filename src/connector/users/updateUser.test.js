@@ -1,43 +1,23 @@
-import SQLite from 'sqlite3';
-import populate from '../../sqlite/populate';
+import db from '../../sqlite';
 import PasswordHash from 'password-hash';
 
 import UpdateUser from './updateUser';
 
 describe('Update user in real db', () => {
-	var conn = null;
 	var mockedPublish = null;
-	beforeEach(done => {
-		mockedPublish = jest.fn();
-		conn = {
-			db: new SQLite.Database(
-				':memory:',
-				SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
-				error => {
-					if (!error) {
-						populate(conn.db, error => {
-							if (!error) {
-								conn.db.exec('PRAGMA foreign_keys=ON');
-								done();
-							}
-						});
-					}
-				}
-			),
-			userSubscription: () => ({
-				publish: mockedPublish
-			})
-		};
-	}, 10000);
-	afterEach(done => {
-		conn.db.close(error => {
-			if (!error) {
-				conn = null;
-				mockedPublish = null;
-				done();
-			}
-		});
-	}, 10000);
+	var conn = null;
+	beforeEach(() =>
+		db.initTest().then(() => {
+			mockedPublish = jest.fn();
+			conn = {
+				db,
+				userSubscription: () => ({
+					publish: mockedPublish
+				})
+			};
+		})
+	);
+	afterEach(() => db.close(false));
 
 	test('Update password for user 1', done => {
 		const customConn = {
@@ -49,14 +29,10 @@ describe('Update user in real db', () => {
 		UpdateUser(customConn, 1, { password: 'newPassword' }).then(res => {
 			expect(customConn.getUser).toBeCalledWith(1);
 			expect(res).toEqual({ id: 1, username: 'admin' });
-			conn.db.get(
-				'SELECT password FROM users WHERE id=1',
-				undefined,
-				(err, row) => {
-					expect(PasswordHash.verify('newPassword', row.password)).toBe(true);
-					done();
-				}
-			);
+			conn.db.get('SELECT password FROM users WHERE id=1').then(row => {
+				expect(PasswordHash.verify('newPassword', row.password)).toBe(true);
+				done();
+			});
 		});
 	});
 
@@ -68,14 +44,10 @@ describe('Update user in real db', () => {
 		UpdateUser(customConn, 500, { password: 'newPassword' }).then(res => {
 			expect(customConn.getUser).not.toBeCalled();
 			expect(res).toBe(null);
-			conn.db.get(
-				'SELECT password FROM users WHERE id=1',
-				undefined,
-				(err, row) => {
-					expect(PasswordHash.verify('admin', row.password)).toBe(true);
-					done();
-				}
-			);
+			conn.db.get('SELECT password FROM users WHERE id=1').then(row => {
+				expect(PasswordHash.verify('admin', row.password)).toBe(true);
+				done();
+			});
 		});
 	});
 
@@ -103,15 +75,15 @@ describe('Update user in real db', () => {
 
 describe('Update user in always-failing database', () => {
 	test('db.get will fail', () => {
-		const db = { get: jest.fn((sql, props, cb) => cb('DB Error at get')) };
+		const db = { get: jest.fn(() => Promise.reject('DB Error at get')) };
 		expect(UpdateUser({ db }, 1, { password: 'newPassword' })).rejects.toBe(
 			'DB Error at get'
 		);
 	});
 	test('db.get will pass, db.run will fail', () => {
 		const db = {
-			get: jest.fn((sql, props, cb) => cb(null, { count: 1 })),
-			run: jest.fn((sql, props, cb) => cb('DB Error at run'))
+			get: jest.fn(() => Promise.resolve({ count: 1 })),
+			run: jest.fn(() => Promise.reject('DB Error at run'))
 		};
 		expect(UpdateUser({ db }, 1, { password: 'newPassword' })).rejects.toBe(
 			'DB Error at run'

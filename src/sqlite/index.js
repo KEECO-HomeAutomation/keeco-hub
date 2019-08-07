@@ -1,97 +1,148 @@
-import fs from 'fs';
-import path from 'path';
 import SQLite from 'sqlite3';
 import chalk from 'chalk';
 
-import { log, isDev } from '../utils';
+import { log, getConfigFile } from '../utils';
 
 import populate from './populate';
 
-if (isDev()) {
-	SQLite.verbose();
-}
-
 class Db {
 	//initialize database
-	init(file, callback) {
-		//check if config folder exists. If not, create
-		if (!fs.existsSync(path.join(process.cwd(), 'config'))) {
-			fs.mkdirSync(path.join(process.cwd(), 'config'));
-		}
-		//check if DB is set up already
-		let dbExists = fs.existsSync(path.join(process.cwd(), 'config', file));
-
-		this.db = new SQLite.Database(
-			path.join(process.cwd(), 'config', file),
-			SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
-			error => {
-				if (error) {
-					log(
-						'SQLite',
-						'Error during opening ' + chalk.gray(file) + '. Error: ' + error,
-						'error'
-					);
-					process.exit(1);
-				} else {
-					//if database doesn't existed, populate it
-					if (!dbExists) {
-						log('SQLite', 'Populating database');
-						populate(db, error => {
-							if (error) {
-								log(
-									'SQLite',
-									'Error during populating database. Error: ' + error,
-									'error'
-								);
-								process.exit(1);
-							} else {
-								log('SQLite', 'Database successfully populated');
-							}
-						});
+	init(fileName) {
+		return new Promise((resolve, reject) => {
+			let file = getConfigFile(fileName);
+			this.db = new SQLite.Database(
+				file.path,
+				SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
+				error => {
+					if (error) {
+						log(
+							'SQLite',
+							'Error during opening ' + chalk.gray(file) + '. Error: ' + error,
+							'error'
+						);
+						reject(error);
+					} else {
+						//if database doesn't existed, populate it
+						if (!file.exists) {
+							log('SQLite', 'Populating database');
+							populate(db).then(
+								() => {
+									log('SQLite', 'Database successfully populated');
+									//turn on foreign keys
+									this.exec('PRAGMA foreign_keys=ON').then(resolve, reject);
+								},
+								error => {
+									log(
+										'SQLite',
+										'Error during populating database. Error: ' + error,
+										'error'
+									);
+									reject(error);
+								}
+							);
+						}
 					}
-
-					//turn on foreign keys
-					this.db.exec('PRAGMA foreign_keys=ON');
-
-					callback();
 				}
-			}
-		);
+			);
+		});
 	}
 
-	close() {
+	//initialize database for testing
+	initTest() {
 		return new Promise((resolve, reject) => {
-			log('SQLite', 'Closing database', 'message');
-			this.db.close(error => {
-				if (error) {
-					log('SQLite', 'Failed to close database. Error: ' + error, 'error');
-					reject(error);
+			this.db = new SQLite.Database(
+				':memory:',
+				SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
+				error => {
+					if (error) {
+						reject(error);
+					} else {
+						populate(db).then(() => {
+							this.exec('PRAGMA foreign_keys=ON').then(resolve, reject);
+						}, reject);
+					}
+				}
+			);
+		});
+	}
+
+	//close database
+	close(logging = true) {
+		return new Promise((resolve, reject) => {
+			if (this.db === undefined) {
+				resolve();
+			} else {
+				if (logging) {
+					log('SQLite', 'Closing database', 'message');
+				}
+				this.db.close(error => {
+					if (error) {
+						if (logging) {
+							log(
+								'SQLite',
+								'Failed to close database. Error: ' + error,
+								'error'
+							);
+						}
+						reject(error);
+					} else {
+						if (logging) {
+							log('SQLite', 'Database closed', 'message');
+						}
+						this.db = undefined;
+						resolve();
+					}
+				});
+			}
+		});
+	}
+
+	run(sql, param) {
+		return new Promise((resolve, reject) => {
+			this.db.run(sql, param, function(err, res) {
+				if (err) {
+					reject(err);
 				} else {
-					log('SQLite', 'Database closed', 'message');
-					resolve();
+					resolve({ lastID: this.lastID, res });
 				}
 			});
 		});
 	}
 
-	run(sql, param, cb) {
-		this.db.run(sql, param, cb);
+	get(sql, param) {
+		return new Promise((resolve, reject) => {
+			this.db.get(sql, param, (err, res) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(res);
+				}
+			});
+		});
 	}
 
-	get(sql, param, cb) {
-		this.db.get(sql, param, cb);
+	all(sql, param) {
+		return new Promise((resolve, reject) => {
+			this.db.all(sql, param, (err, res) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(res);
+				}
+			});
+		});
 	}
 
-	all(sql, param, cb) {
-		this.db.all(sql, param, cb);
-	}
-
-	each(sql, param, cb) {
-		this.db.each(sql, param, cb);
-	}
-
-	exec(sql, cb) {
-		this.db.exec(sql, cb);
+	exec(sql) {
+		return new Promise((resolve, reject) => {
+			this.db.exec(sql, (err, res) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(res);
+				}
+			});
+		});
 	}
 }
 

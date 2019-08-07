@@ -1,4 +1,6 @@
 import chalk from 'chalk';
+import fs from 'fs';
+import path from 'path';
 
 /**
  * @author Gergő Fándly <gergo@systemtest.tk>
@@ -44,4 +46,24 @@ export const isDev = () => {
 	} else {
 		return process.env.NODE_ENV === 'development';
 	}
+};
+
+/**
+ * @author Gergő Fándly <gergo@systemtest.tk>
+ * @function getConfigFile
+ * @summary Gets the full path of a config file and tells if it exists
+ * @param {string} file - The name of the config file
+ * @returns {{path: string, exists: boolean}} configFile
+ */
+export const getConfigFile = file => {
+	let filepath = path.join(process.cwd(), 'config', file);
+
+	//check if config folder exists. If not, create
+	if (!fs.existsSync(path.join(process.cwd(), 'config'))) {
+		fs.mkdirSync(path.join(process.cwd(), 'config'));
+	}
+
+	let exists = fs.existsSync(filepath);
+
+	return { path: filepath, exists };
 };

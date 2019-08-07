@@ -5,38 +5,50 @@ import connector from './connector';
 import mdns from './mdns';
 
 import { log } from './utils';
-import  ports from './utils/ports.config';
+import ports from './utils/ports.config';
 
 /**
  * @author Gergő Fándly <gergo@systemtest.tk>
  * @module index
  * @summary It handles the start and the shutdown of the webserver.
-*/
+ */
 
 log('HUB', 'Keeco-hub is starting up', 'message');
 
 gqlServer.listen(ports.gqlServerPort).then(() => {
-	log('Apollo', 'GraphQL server started at port ' + ports.gqlServerPort, 'message');
+	log(
+		'Apollo',
+		'GraphQL server started at port ' + ports.gqlServerPort,
+		'message'
+	);
 });
 
 mqttServer.listen(ports.mqttServerPort, () => {
-	log('Aedes', 'MQTT server started at port ' + ports.mqttServerPort, 'message');
+	log(
+		'Aedes',
+		'MQTT server started at port ' + ports.mqttServerPort,
+		'message'
+	);
 });
 
-db.init('database.sqlite', () => {
-	log('SQLite', 'Database successfully opened', 'message');
-});
+db.init('database.sqlite').then(
+	() => {
+		log('SQLite', 'Database successfully opened', 'message');
+	},
+	() => {
+		close();
+	}
+);
 
-connector.init(
-	{
+connector
+	.init({
 		db: db,
 		mqtt: { aedes, store },
 		gql: { gqlServer, pubsub }
-	},
-	() => {
+	})
+	.then(() => {
 		log('Connector', 'Connector successfully set up', 'message');
-	}
-);
+	});
 
 mdns.init(() => {
 	log('MDNS', 'MDNS started answering', 'message');
@@ -65,5 +77,6 @@ const close = () => {
 
 process.on('exit', close);
 process.on('SIGINT', close);
+process.on('SIGTERM', close);
 process.on('SIGUSR1', close);
 process.on('SIGUSR2', close);
