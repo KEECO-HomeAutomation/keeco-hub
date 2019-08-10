@@ -98,9 +98,7 @@ describe('Get group data from always failing database', () => {
 		const db = {
 			all: jest
 				.fn()
-				.mockImplementationOnce(() =>
-					Promise.resolve([{ id: 1 }, { id: 2 }])
-				)
+				.mockImplementationOnce(() => Promise.resolve([{ id: 1 }, { id: 2 }]))
 				.mockImplementationOnce(() => Promise.resolve([{ name: 'on' }]))
 				.mockImplementation(() => Promise.resolve([{ name: 'on' }])),
 			get: jest.fn(() => Promise.reject('DB Error at get'))

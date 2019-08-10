@@ -3,7 +3,6 @@ import db from '../../sqlite';
 import GetGroup from './getGroup';
 
 describe('Get group from real database', () => {
-	var conn = null;
 	beforeEach(() =>
 		db.initTest().then(() => {
 			return db.exec('INSERT INTO groups (name) VALUES ("group1"),("group2")');

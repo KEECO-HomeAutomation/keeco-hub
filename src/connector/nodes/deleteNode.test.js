@@ -14,7 +14,9 @@ describe('Delete node from real database', () => {
 					publish: mockedPublish
 				})
 			};
-			return db.exec('INSERT INTO nodes (uuid, name) VALUES ("uuid1", "node1"),("uuid2", "node2")');
+			return db.exec(
+				'INSERT INTO nodes (uuid, name) VALUES ("uuid1", "node1"),("uuid2", "node2")'
+			);
 		})
 	);
 	afterEach(() => db.close(false));

@@ -13,7 +13,7 @@ describe('Log out user from real db', () => {
 	test('Do not do anything if token does not exist', done => {
 		db.run('INSERT INTO auth_tokens (user, token) VALUES (1, "token")').then(
 			() => {
-				Logout({ db }, 'nonExistingToken').then(res => {
+				Logout({ db }, 'nonExistingToken').then(() => {
 					db.get(
 						'SELECT invalidated FROM auth_tokens WHERE token="token"'
 					).then(row => {
@@ -28,7 +28,7 @@ describe('Log out user from real db', () => {
 	test('Invalidate session', done => {
 		db.run('INSERT INTO auth_tokens (user, token) VALUES (1, "token")').then(
 			() => {
-				Logout({ db }, 'token').then(res => {
+				Logout({ db }, 'token').then(() => {
 					db.get(
 						'SELECT invalidated FROM auth_tokens WHERE token="token"'
 					).then(row => {

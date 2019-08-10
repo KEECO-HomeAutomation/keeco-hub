@@ -4,7 +4,7 @@ describe('Publish value to aedes', () => {
 	test('Should call aedes publish', () => {
 		const mqtt = {
 			aedes: {
-				publish: jest.fn(options => Promise.resolve())
+				publish: jest.fn(() => Promise.resolve())
 			}
 		};
 		PublishTopic({ mqtt }, 'topic', 'payload');
@@ -18,7 +18,7 @@ describe('Publish value to aedes', () => {
 	test('Should resolve to an mqtt packet', () => {
 		const mqtt = {
 			aedes: {
-				publish: jest.fn(options => Promise.resolve())
+				publish: jest.fn(() => Promise.resolve())
 			}
 		};
 		expect(PublishTopic({ mqtt }, 'topic', 'payload')).resolves.toEqual({

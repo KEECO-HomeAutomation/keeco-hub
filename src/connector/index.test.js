@@ -112,8 +112,9 @@ import Connector from './index';
 
 describe('Testing main connector', () => {
 	test('init should resolve', () => {
-		const cb = jest.fn();
-		expect(Connector.init({ db: null, mqtt: null, gql: null })).resolves.toBe(undefined);
+		expect(Connector.init({ db: null, mqtt: null, gql: null })).resolves.toBe(
+			undefined
+		);
 	});
 
 	describe('Each child function should call a submodule', () => {

@@ -10,7 +10,7 @@ const deleteNode = (conn, id) => {
 				} else {
 					conn.db
 						.run('DELETE FROM nodes WHERE id=$id', { $id: id })
-						.then(err => {
+						.then(() => {
 							conn.nodeSubscription().publish('DELETED', {
 								id: id,
 								uuid: row.uuid,

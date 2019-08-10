@@ -29,10 +29,9 @@ describe('Delete user with real database', () => {
 		expect(DeleteUser(conn, 500)).resolves.toBe(null);
 	});
 
-	test('Should not bother other users', () => {
-		DeleteUser(conn, 500).then(res => {
-			expect(conn.db.all('SELECT * FROM users')).resolves.toHaveLength(1);
-		});
+	test('Should not bother other users', async () => {
+		DeleteUser(conn, 500);
+		expect(await conn.db.all('SELECT * FROM users')).toHaveLength(1);
 	});
 
 	test('Should post to the subscription', done => {
