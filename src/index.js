@@ -31,20 +31,24 @@ mqttServer.listen(ports.mqttServerPort, () => {
 	);
 });
 
-db.init('database.sqlite', () => {
-	log('SQLite', 'Database successfully opened', 'message');
-});
+db.init('database.sqlite').then(
+	() => {
+		log('SQLite', 'Database successfully opened', 'message');
+	},
+	() => {
+		close();
+	}
+);
 
-connector.init(
-	{
+connector
+	.init({
 		db: db,
 		mqtt: { aedes, store },
 		gql: { gqlServer, pubsub }
-	},
-	() => {
+	})
+	.then(() => {
 		log('Connector', 'Connector successfully set up', 'message');
-	}
-);
+	});
 
 mdns.init(() => {
 	log('MDNS', 'MDNS started answering', 'message');
@@ -73,5 +77,6 @@ const close = () => {
 
 process.on('exit', close);
 process.on('SIGINT', close);
+process.on('SIGTERM', close);
 process.on('SIGUSR1', close);
 process.on('SIGUSR2', close);

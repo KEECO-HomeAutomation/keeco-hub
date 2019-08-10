@@ -1,16 +1,13 @@
 const getTemplateMappings = (conn, templateID) => {
 	return new Promise((resolve, reject) => {
-		conn.db.all(
-			'SELECT id, name FROM node_template_mappings WHERE node_template=$template',
-			{ $template: templateID },
-			(err, rows) => {
-				if (err) {
-					reject(err);
-				} else {
-					resolve(rows);
-				}
-			}
-		);
+		conn.db
+			.all(
+				'SELECT id, name FROM node_template_mappings WHERE node_template=$template',
+				{ $template: templateID }
+			)
+			.then(rows => {
+				resolve(rows);
+			}, reject);
 	});
 };
 

@@ -110,9 +110,9 @@ describe('Testing user subscription', () => {
 		beforeEach(() => {
 			customConn = {
 				...conn,
-				getNode: jest.fn().mockReturnValue({ mocked: 'user' }),
+				getNode: jest.fn().mockReturnValue({ mocked: 'node' }),
 				db: {
-					get: jest.fn((sql, props, cb) => cb(null, { count: 1, id: 1 }))
+					get: jest.fn().mockResolvedValue({ count: 1, id: 1 })
 				}
 			};
 		});
@@ -120,53 +120,67 @@ describe('Testing user subscription', () => {
 			customConn = null;
 		});
 
-		test('Should publish if string matches a node', () => {
+		test('Should publish if string matches a node', done => {
 			let ns = NodeSubscription(customConn);
 			ns.publish = jest.fn();
-			ns.mqttTrigger('nodes/node1/topic1', { mocked: 'client' });
-			expect(ns.publish).toBeCalledTimes(1);
-			expect(ns.publish).toBeCalledWith('UPDATED', { mocked: 'user' });
+			ns.mqttTrigger('nodes/node1/topic1', { mocked: 'client' }).then(() => {
+				expect(ns.publish).toBeCalledTimes(1);
+				expect(ns.publish).toBeCalledWith('UPDATED', { mocked: 'node' });
+				done();
+			});
 		});
 
-		test('Should get ID from database', () => {
+		test('Should get ID from database', done => {
 			let ns = NodeSubscription(customConn);
-			ns.mqttTrigger('nodes/node1/topic1', { mocked: 'client' });
-			expect(customConn.db.get).toBeCalledTimes(1);
+			ns.mqttTrigger('nodes/node1/topic1', { mocked: 'client' }).then(() => {
+				expect(customConn.db.get).toBeCalledTimes(1);
+				done();
+			});
 		});
 
-		test('Should get node from connector', () => {
+		test('Should get node from connector', done => {
 			let ns = NodeSubscription(customConn);
-			ns.mqttTrigger('nodes/node1/topic1', { mocked: 'client' });
-			expect(customConn.getNode).toBeCalledTimes(1);
-			expect(customConn.getNode).toBeCalledWith(1);
+			ns.mqttTrigger('nodes/node1/topic1', { mocked: 'client' }).then(() => {
+				expect(customConn.getNode).toBeCalledTimes(1);
+				expect(customConn.getNode).toBeCalledWith(1);
+				done();
+			});
 		});
 
-		test('Should not publish if topic does not match node', () => {
-			let ns = NodeSubscription(customConn);
-			ns.publish = jest.fn();
-			ns.mqttTrigger('asd/nodes/node1/topic1', { mocked: 'client' });
-			ns.mqttTrigger('nodes/node1', { mocked: 'client' });
-			expect(ns.publish).not.toBeCalled();
-		});
-
-		test('Should not publish if client is null', () => {
+		test('Should not publish if topic does not match node', done => {
 			let ns = NodeSubscription(customConn);
 			ns.publish = jest.fn();
-			ns.mqttTrigger('nodes/node1/topic1', null);
-			expect(ns.publish).not.toBeCalled();
+			Promise.all([
+				ns.mqttTrigger('asd/nodes/node1/topic1', { mocked: 'client' }),
+				ns.mqttTrigger('nodes/node1', { mocked: 'client' })
+			]).then(() => {
+				expect(ns.publish).not.toBeCalled();
+				done();
+			});
 		});
 
-		test('Should not publish if id not found in database', () => {
+		test('Should not publish if client is null', done => {
+			let ns = NodeSubscription(customConn);
+			ns.publish = jest.fn();
+			ns.mqttTrigger('nodes/node1/topic1', null).then(() => {
+				expect(ns.publish).not.toBeCalled();
+				done();
+			});
+		});
+
+		test('Should not publish if id not found in database', done => {
 			const customCustomConn = {
 				...customConn,
 				db: {
-					get: jest.fn((sql, props, cb) => cb(null, { count: 0, id: null }))
+					get: jest.fn(() => Promise.resolve({ count: 0, id: null }))
 				}
 			};
 			let ns = NodeSubscription(customCustomConn);
 			ns.publish = jest.fn();
-			ns.mqttTrigger('nodes/unknown/topic1', { mocked: 'client' });
-			expect(ns.publish).not.toBeCalled();
+			ns.mqttTrigger('nodes/unknown/topic1', { mocked: 'client' }).then(() => {
+				expect(ns.publish).not.toBeCalled();
+				done();
+			});
 		});
 	});
 });
