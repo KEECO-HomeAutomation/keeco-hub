@@ -12,15 +12,13 @@ import populate from './populate';
 
 /**
  * @author Gergő Fándly <gergo@systemtest.tk>
- * @class Db
  * @summary Handle the database connection and its operations.
  */
 class Db {
 	/**
 	 * @author Gergő Fándly <gergo@systemtest.tk>
-	 * @method init
-	 * @param {file} file - A file.
 	 * @summary Initalize the database in a file. If the file doesn't exist, create one.
+	 * @param {file} fileName - A filename relative to the config folder
 	 */
 	init(fileName) {
 		return new Promise((resolve, reject) => {
@@ -64,8 +62,7 @@ class Db {
 
 	/**
 	 * @author Gergő Fándly <gergo@systemtest.tk>
-	 * @method initTest
-	 * @summary Initalize database for testing.
+	 * @summary Initalize database in memory for testing.
 	 */
 	initTest() {
 		return new Promise((resolve, reject) => {
@@ -87,9 +84,8 @@ class Db {
 
 	/**
 	 * @author Gergő Fándly <gergo@systemtest.tk>
-	 * @method close
-	 * @param {bool=true} logging - Turn logging on/off.
 	 * @summary Close the database connection.
+	 * @param {bool} [logging=true] - Turn logging on/off.
 	 */
 	close(logging = true) {
 		return new Promise((resolve, reject) => {
@@ -123,10 +119,10 @@ class Db {
 
 	/**
 	 * @author Gergő Fándly <gergo@systemtest.tk>
-	 * @method run
-	 * @param {string} sql - An SQL command.
-	 * @param {*} param - Parameters of the SQL command.
-	 * @summary TODO
+	 * @summary Run an SQL query without getting results.
+	 * @param {string} sql - An SQL query
+	 * @param {Object<string, string|number|boolean>} param - SQL parameters
+	 * @returns {Promise<Object<string, string|number|boolean>>} A promise containing lastID (last inserted ID to the database)
 	 */
 	run(sql, param) {
 		return new Promise((resolve, reject) => {
@@ -142,10 +138,10 @@ class Db {
 
 	/**
 	 * @author Gergő Fándly <gergo@systemtest.tk>
-	 * @method get
-	 * @param {string} sql - An SQL command.
-	 * @param {*} param - Parameters of the SQL command.
-	 * @summary TODO
+	 * @summary Run an SQL query and get a single row as result.
+	 * @param {string} sql - An SQL query
+	 * @param {Object<string, string|number|boolean>} param - SQL parameters
+	 * @returns {Promise<Object<string, string|number|boolean>>} A promise containing the result row
 	 */
 	get(sql, param) {
 		return new Promise((resolve, reject) => {
@@ -161,10 +157,10 @@ class Db {
 
 	/**
 	 * @author Gergő Fándly <gergo@systemtest.tk>
-	 * @method all
-	 * @param {string} sql - An SQL command.
-	 * @param {*} param - Parameters of the SQL command.
-	 * @summary TODO
+	 * @summary Run an SQL query and get all the rows as an array
+	 * @param {string} sql - An SQL query
+	 * @param {Object<string, string|number|boolean>} param - SQL parameters
+	 * @returns {Promise<Object<string, string|number|boolean>>} A promise containing an array of objects representing the result set
 	 */
 	all(sql, param) {
 		return new Promise((resolve, reject) => {
@@ -180,9 +176,9 @@ class Db {
 
 	/**
 	 * @author Gergő Fándly <gergo@systemtest.tk>
-	 * @method exec
-	 * @param {string} sql - An SQL command.
-	 * @summary TODO
+	 * @summary Execute any SQL string (can contain multiple queries separated by ;). No comments allowed.
+	 * @param {string} sql - An SQL string
+	 * @returns {Promise} An empty promise
 	 */
 	exec(sql) {
 		return new Promise((resolve, reject) => {

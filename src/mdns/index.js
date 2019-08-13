@@ -4,30 +4,24 @@ import uuidv1 from 'uuid/v1';
 import ports from '../utils/ports.config';
 
 /**
- * @author Gergő Fándly <gergo@systemtest.tk>
- * @module mdns
- * @summary mdns
+ * @author uno20001
+ * @module mdns/index
+ * @summary Mdns responder
  */
 
-/**
- * @author Gergő Fándly <gergo@systemtest.tk>
- * @class Mdns
- * @summary Mdns class
- */
 class Mdns {
 	/**
-	 * @author Gergő Fándly <gergo@systemtest.tk>
-	 * @constructor Mdns
+	 * @author uno20001
+	 * @summary Mdns responder class
 	 */
 	constructor() {
 		this.id = uuidv1();
 	}
 
 	/**
-	 * @author Gergő Fándly <gergo@systemtest.tk>
-	 * @method init
-	 * @param {function} callback - A callback function.
+	 * @author uno20001
 	 * @summary Mdns class initalizer method.
+	 * @param {function} callback - A callback function.
 	 */
 	init(callback) {
 		this.httpAd = new dnssd.Advertisement(
