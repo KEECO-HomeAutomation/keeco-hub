@@ -3,15 +3,21 @@ import * as yup from 'yup';
 /**
  * @author Gergő Fándly <gergo@systemtest.tk>
  * @module aedes/provision
- * @summary TODO
+ * @summary Provisions a node to the system
  */
 
 /**
+ * Validates the provision object against the provisionSchema. If the node already exists it will
+ * authorize its connection. Otherwise it will call the addNode function.
+ * If the node is newly created, it will publish to the nodeSubscription.
  * @author Gergő Fándly <gergo@systemtest.tk>
  * @function provision
- * @param {*} conn
- * @param {*} prov
- * @summary Provison. TODO.
+ * @summary Provision new nodes
+ * @param {Connector} conn - The connector
+ * @param {Object<string, *>} prov - The provision object matching the provisionSchema
+ * @see module:aedes/provision~provisionSchema
+ * @returns {Promise<Object<string, *>>} Resolves with object containing isNew (true if node is new)
+ * and uuid (the UUID of the node)
  */
 const provision = (conn, prov) => {
 	return new Promise((resolve, reject) => {
@@ -45,11 +51,14 @@ const provision = (conn, prov) => {
 };
 
 /**
+ * It inserts to the database the node, its endpoints, its templates and its mappings.
+ * If anything fails, the whole node creation fails. Rollback not implemented yet.
  * @author Gergő Fándly <gergo@systemtest.tk>
  * @function addNode
- * @param {*} conn
- * @param {*} prov
- * @summary Add node.
+ * @summary Adds a node
+ * @param {Connector} conn - The connector
+ * @param {Object<string, *>} prov - The provision object
+ * @returns {Promise<number>} Resolves to the ID of the newly created node
  */
 const addNode = (conn, prov) => {
 	return new Promise((resolve, reject) => {
@@ -120,6 +129,10 @@ const addNode = (conn, prov) => {
 	});
 };
 
+/**
+ * Schema used to validate provision objects
+ * @name provisionSchema
+ */
 const JSONSchema = yup.object().shape({
 	uuid: yup.string().required(),
 	name: yup.string(),
@@ -152,4 +165,5 @@ const JSONSchema = yup.object().shape({
 		.required()
 });
 
+/** Function used for node provisioning */
 export default provision;

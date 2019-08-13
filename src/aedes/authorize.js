@@ -2,17 +2,29 @@ import { log } from '../utils';
 
 /**
  * @author Gergő Fándly <gergo@systemtest.tk>
- * @module aedas/authorize
+ * @module aedes/authorize
+ * @summary Functions used to authorize MQTT client actions
  */
 
 /**
+ * @callback authorizePublishCallback
+ * @summary Called to authorize/deny a publish request
+ * @param {Error} error - Set to null to authorize, set to error to deny
+ */
+/**
+ * We will authorize a publish if it is an internal message (client is null),
+ * if client UUID is development or if the client published on an owned topic.
+ * A topic is owned by a node is it has the shape nodes/<uuid>/anything.
+ * Else it will deny the publish and drop the client.
  * @author Gergő Fándly <gergo@systemtest.tk>
  * @function publish
- * @param {*} client
- * @param {*} packet
- * @param {callback} callback - A callback function.
- * @summary Publish to a MQTT topic.
+ * @summary Authorization function for packets published
+ * @param {Object<string, *>} client - The client object
+ * @param {string} client.uuid - The UUID assigned to the client
+ * @param {module:aedes/index.MQTTPacket} packet - The packet object
+ * @param {authorizePublishCallback} callback - Callback for authorization
  */
+/** Publish authorization function */
 export const publish = (client, packet, callback) => {
 	if (!client) {
 		//authorize publish from null clients
@@ -41,13 +53,25 @@ export const publish = (client, packet, callback) => {
 };
 
 /**
+ * @callback authorizeSubscribeCallback
+ * @summary Called to authorize/deny a subscribe request
+ * @param {Error} error - Set to null to authorize, set to error to deny
+ * @param {Object<string, *>} topic - If accepting subscribe, should set to topic object
+ */
+/**
+ * We will authorize a subscribe if it is an internal subscription (client is null),
+ * if client UUID is development or if the client subscribes on an owned topic.
+ * A topic is owned by a node is it has the shape nodes/<uuid>/anything.
+ * Else it will deny the subscribe and drop the client.
  * @author Gergő Fándly <gergo@systemtest.tk>
  * @function subscribe
- * @param {*} client
- * @param {*} sub
- * @param {callback} callback - A callback function.
- * @summary Subscribe to a MQTT topic.
+ * @summary Authorization function for subscriptions
+ * @param {Object<string, *>} client - The client object
+ * @param {string} client.uuid - The UUID assigned to the client
+ * @param {module:aedes/index.MQTTPacket} sub - The subscription object
+ * @param {authorizeSubscribeCallback} callback - Callback for authorization
  */
+/** Subscribe authorization function */
 export const subscribe = (client, sub, callback) => {
 	if (!client) {
 		//authorize subscribe from null clients

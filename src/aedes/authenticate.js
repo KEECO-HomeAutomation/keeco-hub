@@ -4,18 +4,32 @@ import { log, isDev } from '../utils';
 
 /**
  * @author Gergő Fándly <gergo@systemtest.tk>
- * @module aedas/authenticate
+ * @module aedes/authenticate
+ * @summary Authenticate MQTT users
  */
 
 /**
+ * @callback authenticationCallback
+ * @summary Callback to authorize authentication
+ * @param {Error} error - Set to error if error happened
+ * @param {boolean} successful - Set to true if authentication succeeded
+ */
+/**
+ * If the username is not set, it fails. If it is running on a development environment and
+ * the user's username and the user's password is 'development', then it logs in without provision.
+ * If the username (provision string) is over 10000 characters it will deny the authentication
+ * with error code 1 (Unacceptable protocol version). If JSON can't be parsed it will fail with
+ * error code 2 (Identifier rejected). It will then provision the client. If the privisioning fails
+ * the node will be rejected with error code 2.
  * @author Gergő Fándly <gergo@systemtest.tk>
  * @function authenticate
- * @param {*} client - Authenticator client.
- * @param {string} username - Username of the user.
- * @param {*} password - Password of the user.
- * @param {callback} callback - callback
- * @summary Authenticate user with password.
- * If the username is not set, it fails. If it is running on a development environment and the user's username and the user's password is 'development', then it logs in without provision.
+ * @summary Authenticate mqtt user
+ * @param {Object<string, *>} client - Client object
+ * @param {string} client.uuid - Client uuid (can be overwritten)
+ * @param {string} username - Username of the user
+ * @param {string} password - Password of the user
+ * @param {authenticationCallback} callback - callback
+ * @see module:aedes/provision
  */
 const authenticate = (client, username, password, callback) => {
 	if (!username) {
@@ -84,4 +98,5 @@ const authenticate = (client, username, password, callback) => {
 	);
 };
 
+/** Function used for authentication */
 export default authenticate;
