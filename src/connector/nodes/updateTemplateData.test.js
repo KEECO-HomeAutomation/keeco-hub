@@ -139,10 +139,10 @@ describe('Update template data in real database', () => {
 						expect(customConn.mqtt.aedes.publish).toBeCalledTimes(
 							Object.keys(testCase.expect).length
 						);
-						for (let i = 0; i < Object.keys(testCase.expect).length; i++) {
+						for (const i in Object.keys(testCase.expect)) {
 							//expect to be called with a packet object
 							expect(customConn.mqtt.aedes.publish).nthCalledWith(
-								i + 1,
+								parseInt(i) + 1,
 								expect.objectContaining({
 									topic: expect.any(String),
 									payload: expect.any(String)
