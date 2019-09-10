@@ -6,7 +6,7 @@ const resolvers = {
 	},
 	Mutation: {
 		login: async (parent, args, ctx) => {
-			let response = await ctx.connector.login(
+			const response = await ctx.connector.login(
 				args.input.username,
 				args.input.password
 			);

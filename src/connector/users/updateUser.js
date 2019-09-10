@@ -14,7 +14,7 @@ const updateUser = (conn, id, options) => {
 							$passwd: PasswordHash.generate(options.password)
 						})
 						.then(() => {
-							let user = conn.getUser(id);
+							const user = conn.getUser(id);
 							conn.userSubscription().publish('UPDATED', user);
 							resolve(user);
 						}, reject);

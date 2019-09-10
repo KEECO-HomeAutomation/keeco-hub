@@ -6,7 +6,7 @@ const createGroup = (conn, options) => {
 				$is_room: options.is_room
 			})
 			.then(res => {
-				let group = { ...options, id: res.lastID };
+				const group = { ...options, id: res.lastID };
 				conn.groupSubscription().publish('CREATED', group);
 				resolve(group);
 			}, reject);

@@ -34,7 +34,7 @@ import { log, isDev } from '../utils';
 const authenticate = (client, username, password, callback) => {
 	if (!username) {
 		log('Aedes', 'Connection with no username set', 'warning');
-		let error = new Error('No username set');
+		const error = new Error('No username set');
 		error.returnCode = 4;
 		callback(error, null);
 		return;
@@ -52,7 +52,7 @@ const authenticate = (client, username, password, callback) => {
 	//check length to don't parse loooooong jsons
 	if (username.length > 10000) {
 		log('Aedes', 'Received a provision JSON over 10000 characters', 'warning');
-		let error = new Error('Provision JSON too long');
+		const error = new Error('Provision JSON too long');
 		error.returnCode = 1;
 		callback(error, null);
 		return;
@@ -68,7 +68,7 @@ const authenticate = (client, username, password, callback) => {
 			'Received an invalid JSON as provision JSON. Error:' + e,
 			'warning'
 		);
-		let error = new Error('Bad JSON');
+		const error = new Error('Bad JSON');
 		error.returnCode = 2;
 		callback(error, null);
 		return;
@@ -90,7 +90,7 @@ const authenticate = (client, username, password, callback) => {
 		},
 		err => {
 			log('Aedes', 'Provision failed. Error: ' + err, 'error');
-			let error = new Error('Bad provision JSON');
+			const error = new Error('Bad provision JSON');
 			error.returnCode = 2;
 			callback(error, null);
 			return;

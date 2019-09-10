@@ -19,7 +19,7 @@ describe('Testing user subscriptions', () => {
 	});
 
 	test('UserSubscription should return an object with two functions', () => {
-		let schema = yup.object().shape({
+		const schema = yup.object().shape({
 			subscribe: yup
 				.mixed()
 				.test(
@@ -89,7 +89,7 @@ describe('Testing user subscriptions', () => {
 		});
 
 		describe('Should call publish if type in [CREATED, UPDATED, DELETED]', () => {
-			let tests = ['CREATED', 'UPDATED', 'DELETED'];
+			const tests = ['CREATED', 'UPDATED', 'DELETED'];
 			tests.forEach(testCase => {
 				test('Should call publish for ' + testCase, () => {
 					UserSubscription(conn).publish(testCase, { mocked: 'user' });

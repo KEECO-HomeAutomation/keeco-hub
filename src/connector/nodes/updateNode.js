@@ -6,7 +6,7 @@ const updateNode = (conn, nodeID, options) => {
 				$name: options.name
 			})
 			.then(() => {
-				let node = conn.getNode(nodeID);
+				const node = conn.getNode(nodeID);
 				conn.nodeSubscription().publish('UPDATED', node);
 				resolve(node);
 			}, reject);

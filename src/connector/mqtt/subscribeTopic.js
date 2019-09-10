@@ -2,7 +2,7 @@ import uuid from 'uuid';
 
 const subscribeTopic = (conn, topic) => {
 	return new Promise(resolve => {
-		let subUUID = uuid.v4();
+		const subUUID = uuid.v4();
 		conn.mqtt.aedes
 			.subscribe(topic, (packet, cb) => {
 				conn.gql.pubsub.publish('mqtt_' + topic + '_' + subUUID, {

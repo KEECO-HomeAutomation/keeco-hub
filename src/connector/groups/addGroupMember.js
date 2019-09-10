@@ -15,7 +15,7 @@ const addGroupMember = (conn, id, nodeID) => {
 							{ $id: id, $nodeID: nodeID }
 						)
 						.then(() => {
-							let group = conn.getGroup(id);
+							const group = conn.getGroup(id);
 							conn.groupSubscription().publish('UPDATED', group);
 							resolve(group);
 						}, reject);

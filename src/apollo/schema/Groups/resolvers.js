@@ -37,7 +37,7 @@ const resolvers = {
 				throw new AuthenticationError();
 			}
 
-			let update = await ctx.connector.updateGroupData(
+			const update = await ctx.connector.updateGroupData(
 				args.id,
 				args.input.data
 			);

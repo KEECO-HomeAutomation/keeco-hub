@@ -10,7 +10,7 @@ const login = (conn, username, password) => {
 			.then(row => {
 				if (row) {
 					if (PasswordHash.verify(password, row.password)) {
-						let token = RandToken.generate(32);
+						const token = RandToken.generate(32);
 						conn.db
 							.run(
 								'INSERT INTO auth_tokens (user, token) VALUES ($uid, $token)',

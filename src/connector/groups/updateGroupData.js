@@ -1,6 +1,6 @@
 const updateGroupData = (conn, id, options) => {
 	return new Promise((resolve, reject) => {
-		let mappedOptions = options.reduce((acc, cur) => {
+		const mappedOptions = options.reduce((acc, cur) => {
 			return {
 				...acc,
 				[cur.name]: cur.value
@@ -16,14 +16,14 @@ const updateGroupData = (conn, id, options) => {
 				{ $id: id }
 			)
 			.then(rows => {
-				let promises = [];
+				const promises = [];
 				rows.forEach(row => {
 					promises.push(conn.updateTemplateData(row.id, mappedOptions));
 				});
 
 				Promise.all(promises).then(
 					() => {
-						let group = conn.getGroup(id);
+						const group = conn.getGroup(id);
 						conn.groupSubscription().publish('UPDATED', group);
 						resolve(group);
 					},

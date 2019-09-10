@@ -48,7 +48,10 @@ const resolvers = {
 				throw new AuthenticationError();
 			}
 
-			let update = await ctx.connector.updateTemplateData(args.id, args.input);
+			const update = await ctx.connector.updateTemplateData(
+				args.id,
+				args.input
+			);
 			if (update) {
 				return update;
 			}

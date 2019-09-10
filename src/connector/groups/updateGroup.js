@@ -12,7 +12,7 @@ const updateGroup = (conn, id, options) => {
 							{ $name: options.name, $is_room: options.is_room, $id: id }
 						)
 						.then(() => {
-							let group = conn.getGroup(id);
+							const group = conn.getGroup(id);
 							conn.groupSubscription().publish('UPDATED', group);
 							resolve(group);
 						}, reject);

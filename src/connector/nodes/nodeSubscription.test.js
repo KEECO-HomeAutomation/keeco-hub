@@ -19,7 +19,7 @@ describe('Testing user subscription', () => {
 	});
 
 	test('User subscription should return a matching object', () => {
-		let schema = yup.object().shape({
+		const schema = yup.object().shape({
 			subscribe: yup
 				.mixed()
 				.test(
@@ -95,7 +95,7 @@ describe('Testing user subscription', () => {
 		});
 
 		describe('Should call publish if type in [CREATED, UPDATED, DELETED]', () => {
-			let tests = ['CREATED', 'UPDATED', 'DELETED'];
+			const tests = ['CREATED', 'UPDATED', 'DELETED'];
 			tests.forEach(testCase => {
 				test('Should call publish for ' + testCase, () => {
 					NodeSubscription(conn).publish(testCase, { mocked: 'user' });
@@ -121,7 +121,7 @@ describe('Testing user subscription', () => {
 		});
 
 		test('Should publish if string matches a node', done => {
-			let ns = NodeSubscription(customConn);
+			const ns = NodeSubscription(customConn);
 			ns.publish = jest.fn();
 			ns.mqttTrigger('nodes/node1/topic1', { mocked: 'client' }).then(() => {
 				expect(ns.publish).toBeCalledTimes(1);
@@ -131,7 +131,7 @@ describe('Testing user subscription', () => {
 		});
 
 		test('Should get ID from database', done => {
-			let ns = NodeSubscription(customConn);
+			const ns = NodeSubscription(customConn);
 			ns.mqttTrigger('nodes/node1/topic1', { mocked: 'client' }).then(() => {
 				expect(customConn.db.get).toBeCalledTimes(1);
 				done();
@@ -139,7 +139,7 @@ describe('Testing user subscription', () => {
 		});
 
 		test('Should get node from connector', done => {
-			let ns = NodeSubscription(customConn);
+			const ns = NodeSubscription(customConn);
 			ns.mqttTrigger('nodes/node1/topic1', { mocked: 'client' }).then(() => {
 				expect(customConn.getNode).toBeCalledTimes(1);
 				expect(customConn.getNode).toBeCalledWith(1);
@@ -148,7 +148,7 @@ describe('Testing user subscription', () => {
 		});
 
 		test('Should not publish if topic does not match node', done => {
-			let ns = NodeSubscription(customConn);
+			const ns = NodeSubscription(customConn);
 			ns.publish = jest.fn();
 			Promise.all([
 				ns.mqttTrigger('asd/nodes/node1/topic1', { mocked: 'client' }),
@@ -160,7 +160,7 @@ describe('Testing user subscription', () => {
 		});
 
 		test('Should not publish if client is null', done => {
-			let ns = NodeSubscription(customConn);
+			const ns = NodeSubscription(customConn);
 			ns.publish = jest.fn();
 			ns.mqttTrigger('nodes/node1/topic1', null).then(() => {
 				expect(ns.publish).not.toBeCalled();
@@ -175,7 +175,7 @@ describe('Testing user subscription', () => {
 					get: jest.fn(() => Promise.resolve({ count: 0, id: null }))
 				}
 			};
-			let ns = NodeSubscription(customCustomConn);
+			const ns = NodeSubscription(customCustomConn);
 			ns.publish = jest.fn();
 			ns.mqttTrigger('nodes/unknown/topic1', { mocked: 'client' }).then(() => {
 				expect(ns.publish).not.toBeCalled();

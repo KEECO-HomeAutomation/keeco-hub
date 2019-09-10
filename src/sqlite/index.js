@@ -22,7 +22,7 @@ class Db {
 	 */
 	init(fileName) {
 		return new Promise((resolve, reject) => {
-			let file = getConfigFile(fileName);
+			const file = getConfigFile(fileName);
 			this.db = new SQLite.Database(
 				file.path,
 				SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,

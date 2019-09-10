@@ -11,9 +11,9 @@ const getGroupData = (conn, id) => {
 				{ $id: id }
 			)
 			.then(rows => {
-				let templateIDs = rows.reduce((acc, cur) => [...acc, cur.id], []);
+				const templateIDs = rows.reduce((acc, cur) => [...acc, cur.id], []);
 				getAllEndpoints(conn, templateIDs).then(endpoints => {
-					let commonEndpoints = intersection(...endpoints);
+					const commonEndpoints = intersection(...endpoints);
 
 					getValueForCommonEndpoints(
 						conn,

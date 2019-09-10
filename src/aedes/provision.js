@@ -62,10 +62,10 @@ const provision = (conn, prov) => {
  */
 const addNode = (conn, prov) => {
 	return new Promise((resolve, reject) => {
-		let nodeID = null,
-			endpointsMap = {};
+		let nodeID = null;
+		const endpointsMap = {};
 
-		//insert node
+		// insert node
 		conn.db
 			.run('INSERT INTO nodes (uuid, name) VALUES ($uuid, $name)', {
 				$uuid: prov.uuid,
@@ -73,10 +73,10 @@ const addNode = (conn, prov) => {
 			})
 			.then(res => {
 				nodeID = res.lastID;
-				//insert endpoints
+				// insert endpoints
 				return Promise.all(
 					prov.endpoints.map(endpoint => {
-						let promise = conn.db.run(
+						const promise = conn.db.run(
 							'INSERT INTO node_endpoints (node, name, output, range) VALUES ($node, $name, $output, $range)',
 							{
 								$node: nodeID,
@@ -93,7 +93,7 @@ const addNode = (conn, prov) => {
 				);
 			}, reject)
 			.then(() => {
-				//insert templates
+				// insert templates
 				return Promise.all(
 					prov.templates.map(template => {
 						return conn.db.run(
@@ -104,7 +104,7 @@ const addNode = (conn, prov) => {
 				);
 			}, reject)
 			.then(res => {
-				//insert mappings
+				// insert mappings
 				return Promise.all(
 					res.reduce((acc, templateRes, i) => {
 						return [

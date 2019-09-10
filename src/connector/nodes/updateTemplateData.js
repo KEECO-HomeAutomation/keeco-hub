@@ -80,7 +80,7 @@ const updateMQTT = (conn, nodeUUID, templateID, options) => {
 								!ranger.isInRange(+options[mappingsToUpdate[i]], mapping.range)
 						)
 					) {
-						let index = mappings.findIndex(
+						const index = mappings.findIndex(
 							(mapping, i) =>
 								mapping.range !== null &&
 								!ranger.isInRange(+options[mappingsToUpdate[i]], mapping.range)

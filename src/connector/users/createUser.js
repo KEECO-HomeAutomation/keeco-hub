@@ -20,7 +20,7 @@ const createUser = (conn, options) => {
 							}
 						)
 						.then(res => {
-							let user = { ...options, id: res.lastID };
+							const user = { ...options, id: res.lastID };
 							conn
 								.userSubscription()
 								.publish('CREATED', { ...user, password: undefined });

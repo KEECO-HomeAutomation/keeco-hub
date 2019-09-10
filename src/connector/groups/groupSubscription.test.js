@@ -3,7 +3,7 @@ import * as yup from 'yup';
 import GroupSubscription from './groupSubscription';
 
 describe('Group subscriptions', () => {
-	var conn = null;
+	let conn = null;
 	beforeEach(() => {
 		conn = {
 			gql: {
@@ -19,7 +19,7 @@ describe('Group subscriptions', () => {
 	});
 
 	test('GroupSubscription should return an object with two functions', () => {
-		let schema = yup.object().shape({
+		const schema = yup.object().shape({
 			subscribe: yup
 				.mixed()
 				.test(
@@ -89,7 +89,7 @@ describe('Group subscriptions', () => {
 		});
 
 		describe('Should call publish if type in [CREATED, UPDATED, DELETED]', () => {
-			let tests = ['CREATED', 'UPDATED', 'DELETED'];
+			const tests = ['CREATED', 'UPDATED', 'DELETED'];
 			tests.forEach(testCase => {
 				test('Should call publish for ' + testCase, () => {
 					GroupSubscription(conn).publish(testCase, { mocked: 'group' });

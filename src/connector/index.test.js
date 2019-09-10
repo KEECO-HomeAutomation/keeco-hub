@@ -118,7 +118,7 @@ describe('Testing main connector', () => {
 	});
 
 	describe('Each child function should call a submodule', () => {
-		let childFuncs = Object.getOwnPropertyNames(Connector.__proto__);
+		const childFuncs = Object.getOwnPropertyNames(Connector.__proto__);
 		childFuncs.forEach(func => {
 			if (!['init', 'constructor'].includes(func)) {
 				test('Child function <' + func + '> should call submodule', () => {

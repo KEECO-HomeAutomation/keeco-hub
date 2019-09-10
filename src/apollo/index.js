@@ -8,17 +8,17 @@ const pubsub = new PubSub();
 
 const server = new ApolloServer({
 	schema,
-	context: async ({ req, connection }) => {
+	context: async ({ req, wsConnection }) => {
 		let token;
-		if (connection) {
-			//we have a ws connection
-			token = connection.context.Authorization || '';
+		if (wsConnection) {
+			// ws connection
+			token = wsConnection.context.Authorization || '';
 		} else {
-			//we have a http connection
+			// http connection
 			token = req.headers.authorization || '';
 		}
 
-		let user = await connector.authenticate(token);
+		const user = await connector.authenticate(token);
 		return { connector, user, pubsub };
 	}
 });
