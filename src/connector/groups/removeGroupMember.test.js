@@ -3,8 +3,8 @@ import db from '../../sqlite';
 import RemoveGroupMember from './removeGroupMember';
 
 describe('Remove group member from real database', () => {
-	var mockedPublish = null;
-	var conn = null;
+	let mockedPublish = null;
+	let conn = null;
 	beforeEach(() =>
 		db.initTest().then(() => {
 			mockedPublish = jest.fn();

@@ -4,8 +4,8 @@ import PasswordHash from 'password-hash';
 import CreateUser from './createUser';
 
 describe('Create user with real database', () => {
-	var mockedPublish = null;
-	var conn = null;
+	let mockedPublish = null;
+	let conn = null;
 	beforeEach(() =>
 		db.initTest().then(() => {
 			mockedPublish = jest.fn();

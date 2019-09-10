@@ -4,8 +4,8 @@ import { UserInputError } from 'apollo-server';
 import UpdateTemplateData from './updateTemplateData';
 
 describe('Update template data in real database', () => {
-	var mockedPublish = null;
-	var conn = null;
+	let mockedPublish = null;
+	let conn = null;
 	beforeEach(() =>
 		db.initTest().then(() => {
 			mockedPublish = jest.fn();

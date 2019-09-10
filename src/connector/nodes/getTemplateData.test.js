@@ -41,7 +41,7 @@ const tests = [
 ];
 
 describe('Get template data from real database', () => {
-	var conn = null;
+	let conn = null;
 	beforeEach(() =>
 		db.initTest().then(() => {
 			conn = {

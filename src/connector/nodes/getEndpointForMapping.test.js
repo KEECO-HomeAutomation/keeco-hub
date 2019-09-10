@@ -4,7 +4,7 @@ import MQTTStore from 'mqtt-store';
 import GetEndpointForMapping from './getEndpointForMapping';
 
 describe('Get endpoints for mapping from real database', () => {
-	var conn = null;
+	let conn = null;
 	beforeEach(() =>
 		db.initTest().then(() => {
 			conn = {

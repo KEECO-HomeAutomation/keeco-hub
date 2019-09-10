@@ -3,7 +3,7 @@ import * as yup from 'yup';
 import UserSubscription from './userSubscription';
 
 describe('Testing user subscriptions', () => {
-	var conn = null;
+	let conn = null;
 	beforeEach(() => {
 		conn = {
 			gql: {

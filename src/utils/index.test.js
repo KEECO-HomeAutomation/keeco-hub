@@ -8,7 +8,7 @@ import { log, isDev, getConfigFile } from './index';
 
 describe('utils', () => {
 	describe('log', () => {
-		var types = [
+		const types = [
 			undefined,
 			'message',
 			'error',
@@ -42,7 +42,7 @@ describe('utils', () => {
 	});
 
 	describe('isDev', () => {
-		var tests = [
+		const tests = [
 			{
 				env: 'development',
 				expect: true

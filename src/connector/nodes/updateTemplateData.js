@@ -37,7 +37,7 @@ const updateTemplateData = (conn, templateID, options) => {
 
 const updateMQTT = (conn, nodeUUID, templateID, options) => {
 	return new Promise((resolve, reject) => {
-		var mappingsToUpdate = Object.keys(options);
+		const mappingsToUpdate = Object.keys(options);
 
 		Promise.all(
 			mappingsToUpdate.map(mapping => {

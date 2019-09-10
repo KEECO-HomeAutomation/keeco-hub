@@ -4,8 +4,8 @@ import PasswordHash from 'password-hash';
 import UpdateUser from './updateUser';
 
 describe('Update user in real db', () => {
-	var mockedPublish = null;
-	var conn = null;
+	let mockedPublish = null;
+	let conn = null;
 	beforeEach(() =>
 		db.initTest().then(() => {
 			mockedPublish = jest.fn();

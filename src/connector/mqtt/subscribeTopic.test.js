@@ -4,8 +4,8 @@ import SubscribeTopic from './subscribeTopic';
 jest.mock('uuid');
 
 describe('Subscribe to topic', () => {
-	var subscribeCb;
-	var conn;
+	let subscribeCb;
+	let conn;
 	beforeEach(() => {
 		subscribeCb = jest.fn();
 		conn = {

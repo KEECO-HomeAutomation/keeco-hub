@@ -4,7 +4,7 @@ import MQTTStore from 'mqtt-store';
 import GetEndpoints from './getEndpoints';
 
 describe('Get endpoints from real database', () => {
-	var conn = null;
+	let conn = null;
 	beforeEach(() =>
 		db.initTest().then(() => {
 			conn = {

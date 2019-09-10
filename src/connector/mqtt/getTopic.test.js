@@ -3,7 +3,7 @@ import MQTTStore from 'mqtt-store';
 import GetTopic from './getTopic';
 
 describe('Get Topic value from MQTT store', () => {
-	var mqtt;
+	let mqtt;
 	beforeEach(() => {
 		mqtt = {
 			store: new MQTTStore()

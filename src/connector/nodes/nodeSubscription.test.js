@@ -3,7 +3,7 @@ import * as yup from 'yup';
 import NodeSubscription from './nodeSubscription';
 
 describe('Testing user subscription', () => {
-	var conn = null;
+	let conn = null;
 	beforeEach(() => {
 		conn = {
 			gql: {
@@ -106,7 +106,7 @@ describe('Testing user subscription', () => {
 	});
 
 	describe('NodeSubscription.mqttTrigger', () => {
-		var customConn = null;
+		let customConn = null;
 		beforeEach(() => {
 			customConn = {
 				...conn,

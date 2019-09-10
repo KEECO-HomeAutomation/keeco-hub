@@ -4,7 +4,7 @@ import MQTTStore from 'mqtt-store';
 import GetGroupData from './getGroupData';
 
 describe('Get group data from real database', () => {
-	var conn = null;
+	let conn = null;
 	beforeEach(() =>
 		db.initTest().then(() => {
 			conn = {

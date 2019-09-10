@@ -6,7 +6,7 @@ const getEndpoints = (conn, nodeID, nodeUUID) => {
 				{ $node: nodeID }
 			)
 			.then(rows => {
-				var result = rows.map(row => {
+				const result = rows.map(row => {
 					return {
 						...row,
 						output: row.output === 1,

@@ -3,8 +3,8 @@ import db from '../../sqlite';
 import DeleteNode from './deleteNode';
 
 describe('Delete node from real database', () => {
-	var mockedPublish = null;
-	var conn = null;
+	let mockedPublish = null;
+	let conn = null;
 	beforeEach(() =>
 		db.initTest().then(() => {
 			mockedPublish = jest.fn();
