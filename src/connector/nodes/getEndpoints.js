@@ -10,7 +10,7 @@ const getEndpoints = (conn, nodeID, nodeUUID) => {
 					return {
 						...row,
 						output: row.output === 1,
-						value: conn.mqtt.store.get('nodes/' + nodeUUID + '/' + row.name)
+						value: conn.mqtt.store.get(['nodes', nodeUUID, row.name].join('/'))
 							.value
 					};
 				});
