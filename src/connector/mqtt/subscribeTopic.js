@@ -2,10 +2,9 @@ import uuid from 'uuid';
 
 const subscribeTopic = (conn, topic) => {
 	return new Promise(resolve => {
-		let subUUID = uuid.v4();
-		conn.mqtt.aedes.subscribe(
-			topic,
-			(packet, cb) => {
+		const subUUID = uuid.v4();
+		conn.mqtt.aedes
+			.subscribe(topic, (packet, cb) => {
 				conn.gql.pubsub.publish('mqtt_' + topic + '_' + subUUID, {
 					subscribeTopic: {
 						topic: packet.topic,
@@ -13,13 +12,12 @@ const subscribeTopic = (conn, topic) => {
 					}
 				});
 				cb();
-			},
-			() => {
+			})
+			.then(() => {
 				resolve(
 					conn.gql.pubsub.asyncIterator(['mqtt_' + topic + '_' + subUUID])
 				);
-			}
-		);
+			});
 	});
 };
 

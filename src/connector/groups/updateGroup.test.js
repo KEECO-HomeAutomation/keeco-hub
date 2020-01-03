@@ -1,52 +1,25 @@
-import SQLite from 'sqlite3';
-import populate from '../../sqlite/populate';
+import db from '../../sqlite';
 
 import UpdateGroup from './updateGroup';
 
 describe('Update group in real database', () => {
-	var mockedPublish = null;
-	var conn = null;
-	beforeEach(done => {
-		mockedPublish = jest.fn();
-		conn = {
-			db: new SQLite.Database(
-				':memory:',
-				SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
-				error => {
-					if (!error) {
-						populate(conn.db, error => {
-							if (!error) {
-								conn.db.exec('PRAGMA foreign_keys=ON');
+	let mockedPublish = null;
+	let conn = null;
+	beforeEach(() =>
+		db.initTest().then(() => {
+			mockedPublish = jest.fn();
+			conn = {
+				db,
+				groupSubscription: () => ({
+					publish: mockedPublish
+				}),
+				getGroup: jest.fn().mockReturnValue({ mocked: 'group' })
+			};
 
-								//add sample data
-								conn.db.exec(
-									'INSERT INTO groups (name) VALUES ("group1"),("group2")',
-									error => {
-										if (!error) {
-											done();
-										}
-									}
-								);
-							}
-						});
-					}
-				}
-			),
-			groupSubscription: () => ({
-				publish: mockedPublish
-			}),
-			getGroup: jest.fn().mockReturnValue({ mocked: 'group' })
-		};
-	}, 10000);
-	afterEach(done => {
-		conn.db.close(error => {
-			if (!error) {
-				conn = null;
-				mockedPublish = null;
-				done();
-			}
-		});
-	}, 10000);
+			return db.exec('INSERT INTO groups (name) VALUES ("group1"),("group2")');
+		})
+	);
+	afterEach(() => db.close(false));
 
 	test('Should resolve to null if group not found', () => {
 		expect(
@@ -69,8 +42,7 @@ describe('Update group in real database', () => {
 
 	test('Should update group in database', done => {
 		UpdateGroup(conn, 1, { name: 'newName', is_room: 1 }).then(() => {
-			conn.db.all('SELECT id, name, is_room FROM groups', {}, (err, rows) => {
-				expect(err).toBe(null);
+			conn.db.all('SELECT id, name, is_room FROM groups').then(rows => {
 				//should leave other group untouched
 				expect(rows.length).toBe(2);
 				expect(rows[0]).toEqual({ id: 1, name: 'newName', is_room: 1 });
@@ -100,7 +72,7 @@ describe('Update group in real database', () => {
 describe('Update group in always failing database', () => {
 	test('db.get will fail', () => {
 		const db = {
-			get: jest.fn((sql, props, cb) => cb('DB Error at get'))
+			get: jest.fn(() => Promise.reject('DB Error at get'))
 		};
 		expect(
 			UpdateGroup({ db }, 1, { name: 'newName', is_room: 1 })
@@ -109,8 +81,8 @@ describe('Update group in always failing database', () => {
 
 	test('db.run will fail', () => {
 		const db = {
-			get: jest.fn((sql, props, cb) => cb(null, { count: 1 })),
-			run: jest.fn((sql, props, cb) => cb('DB Error at run'))
+			get: jest.fn(() => Promise.resolve({ count: 1 })),
+			run: jest.fn(() => Promise.reject('DB Error at run'))
 		};
 		expect(
 			UpdateGroup({ db }, 1, { name: 'newName', is_room: 1 })

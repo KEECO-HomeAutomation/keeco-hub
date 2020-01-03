@@ -9,7 +9,8 @@
     "lint": "eslint 'src/**/*.js'",
     "format": "prettier --write 'src/**/*.js' 'src/**/*.graphql'",
     "start": "nodemon --exec babel-node src/index.js",
-    "build": "cross-env NODE_ENV=production babel src -d build"
+    "build": "cross-env NODE_ENV=production babel src -d build",
+    "docs": "./node_modules/.bin/jsdoc --recurse src --destination docs"
   },
   "repository": {
     "type": "git",
@@ -26,34 +27,35 @@
   },
   "homepage": "https://github.com/KEECO-HomeAutomation/keeco-hub#readme",
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
-    "@babel/node": "^7.2.2",
-    "@babel/preset-env": "^7.3.1",
-    "babel-plugin-import-graphql": "^2.6.2",
-    "cross-env": "^5.2.0",
-    "eslint": "^5.12.1",
-    "eslint-config-prettier": "^4.0.0",
-    "eslint-plugin-prettier": "^3.0.1",
-    "jest": "^24.0.0",
-    "nodemon": "^1.18.9",
-    "prettier": "^1.16.4"
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/node": "^7.6.1",
+    "@babel/preset-env": "^7.6.0",
+    "babel-plugin-import-graphql": "^2.7.0",
+    "cross-env": "^5.2.1",
+    "eslint": "^6.3.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "jest": "^24.9.0",
+    "jsdoc": "^3.6.3",
+    "nodemon": "^1.19.2",
+    "prettier": "^1.18.2"
   },
   "dependencies": {
-    "aedes": "^0.36.0",
-    "apollo-server": "^2.3.2",
+    "aedes": "^0.39.0",
+    "apollo-server": "^2.9.3",
     "chalk": "^2.4.2",
     "dnssd": "^0.4.1",
-    "graphql": "^14.1.1",
-    "graphql-tools": "^4.0.4",
-    "lodash": "^4.17.13",
+    "graphql": "^14.5.4",
+    "graphql-tools": "^4.0.5",
+    "lodash": "^4.17.15",
     "mqtt-store": "^2.1.0",
     "number-ranger": "^2.0.0",
     "password-hash": "^1.2.2",
     "path": "^0.12.7",
     "rand-token": "^0.4.0",
-    "sqlite3": "^4.0.6",
-    "uuid": "^3.3.2",
-    "yup": "^0.26.10"
+    "sqlite3": "^4.1.0",
+    "uuid": "^3.3.3",
+    "yup": "^0.27.0"
   }
 }

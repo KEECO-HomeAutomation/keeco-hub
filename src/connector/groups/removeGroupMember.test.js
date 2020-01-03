@@ -1,54 +1,28 @@
-import SQLite from 'sqlite3';
-import populate from '../../sqlite/populate';
+import db from '../../sqlite';
 
 import RemoveGroupMember from './removeGroupMember';
 
 describe('Remove group member from real database', () => {
-	var mockedPublish = null;
-	var conn = null;
-	beforeEach(done => {
-		mockedPublish = jest.fn();
-		conn = {
-			db: new SQLite.Database(
-				':memory:',
-				SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
-				error => {
-					if (!error) {
-						populate(conn.db, error => {
-							if (!error) {
-								conn.db.exec('PRAGMA foreign_keys=ON');
+	let mockedPublish = null;
+	let conn = null;
+	beforeEach(() =>
+		db.initTest().then(() => {
+			mockedPublish = jest.fn();
+			conn = {
+				db,
+				groupSubscription: () => ({
+					publish: mockedPublish
+				}),
+				getGroup: jest.fn().mockReturnValue({ mocked: 'group' })
+			};
 
-								//add sample data
-								conn.db.exec(
-									`INSERT INTO groups (name) VALUES ("group1"),("group2");
-								INSERT INTO nodes (uuid) VALUES ("node1"),("node2");
-								INSERT INTO group_members (pgroup, node) VALUES (1, 1),(1, 2),(2, 1);`,
-									error => {
-										if (!error) {
-											done();
-										}
-									}
-								);
-							}
-						});
-					}
-				}
-			),
-			groupSubscription: () => ({
-				publish: mockedPublish
-			}),
-			getGroup: jest.fn().mockReturnValue({ mocked: 'group' })
-		};
-	}, 10000);
-	afterEach(done => {
-		conn.db.close(error => {
-			if (!error) {
-				conn = null;
-				mockedPublish = null;
-				done();
-			}
-		});
-	}, 10000);
+			return conn.db
+				.exec(`INSERT INTO groups (name) VALUES ("group1"),("group2");
+						INSERT INTO nodes (uuid) VALUES ("node1"),("node2");
+						INSERT INTO group_members (pgroup, node) VALUES (1, 1),(1, 2),(2, 1);`);
+		})
+	);
+	afterEach(() => db.close(false));
 
 	test('Should resolve to null if node not part of group', () => {
 		expect(RemoveGroupMember(conn, 2, 2)).resolves.toBe(null);
@@ -67,8 +41,7 @@ describe('Remove group member from real database', () => {
 
 	test('Should remove node from database', done => {
 		RemoveGroupMember(conn, 1, 1).then(() => {
-			conn.db.all('SELECT pgroup, node FROM group_members', {}, (err, rows) => {
-				expect(err).toBe(null);
+			conn.db.all('SELECT pgroup, node FROM group_members').then(rows => {
 				//should live the other entries untouched
 				expect(rows.length).toBe(2);
 				expect(rows[0]).toEqual({ pgroup: 1, node: 2 });
@@ -89,15 +62,15 @@ describe('Remove group member from real database', () => {
 describe('Remove group member from always failing database', () => {
 	test('db.get will fail', () => {
 		const db = {
-			get: jest.fn((sql, props, cb) => cb('DB Error at get'))
+			get: jest.fn(() => Promise.reject('DB Error at get'))
 		};
 		expect(RemoveGroupMember({ db }, 1, 1)).rejects.toBe('DB Error at get');
 	});
 
 	test('db.run will fail', () => {
 		const db = {
-			get: jest.fn((sql, props, cb) => cb(null, { count: 1 })),
-			run: jest.fn((sql, props, cb) => cb('DB Error at run'))
+			get: jest.fn(() => Promise.resolve({ count: 1 })),
+			run: jest.fn(() => Promise.reject('DB Error at run'))
 		};
 		expect(RemoveGroupMember({ db }, 1, 1)).rejects.toBe('DB Error at run');
 	});

@@ -24,7 +24,7 @@ The _master_ branch contains the well tested code that is ready to be released. 
 
 The _dev_ branch is used for development.
 
-Each feature must have it's own branch prefixed with __feature/__ (for eample: feature/userMutations). When the work is finished you have to file a Pull Request which will be reviewed by one of the code owners. During the review the reviewer __MUST__ check the results of the CI tests and the compliance of naming conventions. After merging the feature branch it will be removed from the origin repository.
+Each feature must have its own branch prefixed with __feature/__ (for example: feature/userMutations). When the work is finished you have to file a Pull Request which will be reviewed by one of the code owners. During the review the reviewer __MUST__ check the results of the CI tests and the compliance of naming conventions. After merging the feature branch it will be removed from the origin repository.
 
 
 
@@ -48,4 +48,4 @@ You can test MQTT functionality with [MQTT.fx](https://mqttfx.jensd.de/). The us
 
 ## Caveats
 
-Due to limitations when modifying _.graphql_ files the application won't reload. You have to kill it with `Ctrl + C`, clear the _node_modules/.cache/babel-loader_ directory and start it back again. Or you make a small modification (for example adding a new line at the end of the file) in _src/apollo/schema/index.js_ and everything will be reloaded automatically. Just make sure you revert your changes afterwards.
+Due to limitations when modifying _.graphql_ files the application won't reload. You have to kill it with `Ctrl + C`, clear the _node_modules/.cache/babel-loader_ directory and start it back again. Or you make a small modification (for example, adding a new line at the end of the file) in _src/apollo/schema/index.js_ and everything will be reloaded automatically. Just make sure you revert your changes afterwards.

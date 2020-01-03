@@ -32,7 +32,7 @@ const resolvers = {
 				throw new AuthenticationError();
 			}
 
-			let user = await ctx.connector.createUser(args.input);
+			const user = await ctx.connector.createUser(args.input);
 			if (!user) {
 				throw new ApolloError('Username already taken', 'GENERIC');
 			} else {

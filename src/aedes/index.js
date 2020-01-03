@@ -1,33 +1,54 @@
-import Aedes from 'aedes';
+import CustomAedes from './CustomAedes';
 import net from 'net';
 import MQTTStore from 'mqtt-store';
 
 import connector from '../connector';
 
-import authenticate from './authenticate';
-import * as authorize from './authorize';
+/**
+ * Creates an Aedes broker instance. Creates a TCP server using and attaches the aedes handle to it.
+ * The module also creates an MQTT store and keeps it in sync with the broker. The module also activates
+ * the triggers for the connector nodeSubscription.
+ * @author Gergő Fándly <gergo@systemtest.tk>
+ * @module aedes/index
+ * @summary MQTT broker setup
+ */
 
-const aedes = new Aedes();
+/**
+ * @typedef {Object} module:aedes/index.MQTTPacket
+ * @summary MQTT packet
+ * @property {string} [cmd=publish] - Command. Should be publish
+ * @property {number} [qos=0] - Quality of service. Can be 0, 1 or 2
+ * @property {string} topic - Topic to publish to
+ * @property {string|Buffer} payload - Payload to publish (needed when cmd=publish)
+ * @property {boolean} [retain=false] - Set if packet is retained
+ */
+
+const aedes = new CustomAedes();
 const server = net.createServer(aedes.handle);
 
-//create store aedes server
+// Create store aedes server.
 const store = new MQTTStore();
 
-//subscribe store for all the changes
+// Subscribe store for all the changes.
 aedes.on('publish', (packet, client) => {
-	//publish to subscription
+	// Publish to subscription.
 	connector.nodeSubscription().mqttTrigger(packet.topic, client);
 
-	//sync store
+	// Sync store.
 	store.put(packet.topic, packet.payload.toString('utf-8'));
 });
 
-//set authentication function
-aedes.authenticate = authenticate;
+export {
+	/**
+	 * @summary Aedes broker instance
+	 * @see module:aedes/CustomAedes
+	 */
+	aedes,
+	/**
+	 * @summary MQTT store
+	 */
+	store
+};
 
-//set authorization functions
-aedes.authorizePublish = authorize.publish;
-aedes.authorizeSubscribe = authorize.subscribe;
-
-export { aedes, store };
+/** TCP server instance */
 export default server;

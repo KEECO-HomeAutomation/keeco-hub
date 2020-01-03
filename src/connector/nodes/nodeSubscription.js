@@ -15,22 +15,25 @@ const nodeSubscription = conn => ({
 		}
 	},
 	mqttTrigger(topic, client) {
-		//client is null for internal messages and messages sent from server
-		if (client !== null && topic.match(/^nodes\/.*\/.*/)) {
-			//we have something published by a node
-			let uuid = topic.split('/')[1];
-			conn.db.get(
-				'SELECT COUNT(id) AS count, id FROM nodes WHERE uuid=$uuid',
-				{ $uuid: uuid },
-				(err, row) => {
-					if (!err) {
+		return new Promise(resolve => {
+			//client is null for internal messages and messages sent from server
+			if (client !== null && topic.match(/^nodes\/.*\/.*/)) {
+				//we have something published by a node
+				const uuid = topic.split('/')[1];
+				conn.db
+					.get('SELECT COUNT(id) AS count, id FROM nodes WHERE uuid=$uuid', {
+						$uuid: uuid
+					})
+					.then(row => {
 						if (row.count !== 0) {
 							this.publish('UPDATED', conn.getNode(row.id));
 						}
-					}
-				}
-			);
-		}
+						resolve();
+					});
+			} else {
+				resolve();
+			}
+		});
 	}
 });
 

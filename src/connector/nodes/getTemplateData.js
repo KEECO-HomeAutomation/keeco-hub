@@ -1,25 +1,25 @@
 const getTemplateData = (conn, templateID, templateName) => {
 	return new Promise((resolve, reject) => {
-		conn.db.get(
-			'SELECT n.uuid FROM node_templates AS nt INNER JOIN nodes AS n ON (n.id=nt.node) WHERE nt.id=$id',
-			{ $id: templateID },
-			(err, row) => {
-				if (err) {
-					reject(err);
+		conn.db
+			.get(
+				'SELECT n.uuid FROM node_templates AS nt INNER JOIN nodes AS n ON (n.id=nt.node) WHERE nt.id=$id',
+				{ $id: templateID }
+			)
+			.then(row => {
+				if (row) {
+					getValues(conn, row.uuid, templateID, templateName).then(
+						resolve,
+						reject
+					);
 				} else {
-					if (row) {
-						resolve(getValues(conn, row.uuid, templateID, templateName));
-					} else {
-						resolve(null);
-					}
+					resolve(null);
 				}
-			}
-		);
+			}, reject);
 	});
 };
 
 const getValues = (conn, node, templateID, templateName) => {
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		switch (templateName) {
 			case 'switch':
 				Promise.all([conn.getMapping(node, templateID, 'on')]).then(
@@ -28,7 +28,8 @@ const getValues = (conn, node, templateID, templateName) => {
 							id: node + '_' + templateID + '_' + templateName + '_data',
 							on: conn.mqtt.store.get(mappings[0]).value > 0 ? true : false
 						});
-					}
+					},
+					reject
 				);
 				break;
 
@@ -48,7 +49,7 @@ const getValues = (conn, node, templateID, templateName) => {
 						b: conn.mqtt.store.get(mappings[3]).value,
 						dim: conn.mqtt.store.get(mappings[4]).value
 					});
-				});
+				}, reject);
 				break;
 
 			case 'thermostat':
@@ -58,7 +59,8 @@ const getValues = (conn, node, templateID, templateName) => {
 							id: node + '_' + templateID + '_' + templateName + '_data',
 							temperature: conn.mqtt.store.get(mappings[0]).value
 						});
-					}
+					},
+					reject
 				);
 				break;
 

@@ -1,45 +1,16 @@
-import SQLite from 'sqlite3';
-import populate from '../../sqlite/populate';
+import db from '../../sqlite';
 
 import GetNodesByTemplate from './getNodesByTemplate';
 
 describe('Get nodes by template from real database', () => {
-	var db = null;
-	beforeEach(done => {
-		db = new SQLite.Database(
-			':memory:',
-			SQLite.OPEN_READWRITE | SQLite.OPEN_CREATE,
-			error => {
-				if (!error) {
-					populate(db, error => {
-						if (!error) {
-							db.exec('PRAGMA foreign_keys=ON');
-
-							//add data
-							db.exec(
-								`INSERT INTO nodes (uuid, name) VALUES ('uuid1', 'node1'), ('uuid2', 'node2'), ('uuid3', 'node3');
-								INSERT INTO node_templates (node, name) VALUES (1, 'switch'), (2, 'switch'), (3, 'switch'),
-								(1, 'lamp'), (2, 'lamp'), (3, 'thermostat');`,
-								error => {
-									if (!error) {
-										done();
-									}
-								}
-							);
-						}
-					});
-				}
-			}
-		);
-	}, 10000);
-	afterEach(done => {
-		db.close(error => {
-			if (!error) {
-				db = null;
-				done();
-			}
-		});
-	}, 10000);
+	beforeEach(() =>
+		db.initTest().then(() => {
+			return db.exec(`INSERT INTO nodes (uuid, name) VALUES ('uuid1', 'node1'), ('uuid2', 'node2'), ('uuid3', 'node3');
+							INSERT INTO node_templates (node, name) VALUES (1, 'switch'), (2, 'switch'), (3, 'switch'),
+							(1, 'lamp'), (2, 'lamp'), (3, 'thermostat');`);
+		})
+	);
+	afterEach(() => db.close(false));
 
 	test('Should resolve to empty array if no node found for that template', () => {
 		expect(
@@ -108,7 +79,7 @@ describe('Get nodes by template from real database', () => {
 describe('Get nodes by template from always-failing database', () => {
 	test('db.all will fail', () => {
 		const db = {
-			all: jest.fn((sql, props, cb) => cb('DB Error at all'))
+			all: jest.fn(() => Promise.reject('DB Error at all'))
 		};
 		expect(GetNodesByTemplate({ db }, 'switch')).rejects.toBe(
 			'DB Error at all'
