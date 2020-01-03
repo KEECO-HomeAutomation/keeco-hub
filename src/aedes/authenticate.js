@@ -2,6 +2,8 @@ import connector from '../connector';
 import provision from './provision';
 import { log, isDev } from '../utils';
 
+const USERNAME_LENGHT_LIMIT = 10000;
+
 /**
  * @author Gergő Fándly <gergo@systemtest.tk>
  * @module aedes/authenticate
@@ -17,7 +19,7 @@ import { log, isDev } from '../utils';
 /**
  * If the username is not set, it fails. If it is running on a development environment and
  * the user's username and the user's password is 'development', then it logs in without provision.
- * If the username (provision string) is over 10000 characters it will deny the authentication
+ * If the username (provision string) is above the limit definied in the USERNAME_LENGHT_LIMIT constant it will deny the authentication
  * with error code 1 (Unacceptable protocol version). If JSON can't be parsed it will fail with
  * error code 2 (Identifier rejected). It will then provision the client. If the privisioning fails
  * the node will be rejected with error code 2.
@@ -49,16 +51,24 @@ const authenticate = (client, username, password, callback) => {
 		return;
 	}
 
-	//check length to don't parse loooooong jsons
-	if (username.length > 10000) {
-		log('Aedes', 'Received a provision JSON over 10000 characters', 'warning');
-		const error = new Error('Provision JSON too long');
+	if (username.length > USERNAME_LENGHT_LIMIT) {
+		log(
+			'Aedes',
+			[
+				'Received a provision JSON over',
+				USERNAME_LENGHT_LIMIT,
+				'characters'
+			].join(' '),
+			'warning'
+		);
+		const error = new Error(
+			'Provision JSON is longer than the USERNAME_LENGTH_LIMIT'
+		);
 		error.returnCode = 1;
 		callback(error, null);
 		return;
 	}
 
-	//try to parse json
 	let parsed;
 	try {
 		parsed = JSON.parse(username);
@@ -68,13 +78,12 @@ const authenticate = (client, username, password, callback) => {
 			'Received an invalid JSON as provision JSON. Error:' + e,
 			'warning'
 		);
-		const error = new Error('Bad JSON');
+		const error = new Error('Provison JSON is an invalid.');
 		error.returnCode = 2;
 		callback(error, null);
 		return;
 	}
 
-	//provision client
 	provision(connector, parsed).then(
 		({ isNew, uuid }) => {
 			if (isNew) {
