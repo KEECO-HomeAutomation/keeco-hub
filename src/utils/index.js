@@ -41,11 +41,7 @@ export const log = (domain, message, type = 'info') => {
  * @returns true if it is running in a developer environment, false otherwise.
  */
 export const isDev = () => {
-	if (!process.env.NODE_ENV) {
-		return true;
-	} else {
-		return process.env.NODE_ENV === 'development';
-	}
+	return !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 };
 
 /**
