@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "aedes": "^0.39.0",
-    "apollo-server": "^2.9.3",
+    "apollo-server": "^2.14.2",
     "chalk": "^2.4.2",
     "dnssd": "^0.4.1",
     "graphql": "^14.5.4",
