@@ -48,7 +48,7 @@
     "dnssd": "^0.4.1",
     "graphql": "^14.5.4",
     "graphql-tools": "^4.0.5",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mqtt-store": "^2.1.0",
     "number-ranger": "^2.0.0",
     "password-hash": "^1.2.2",
