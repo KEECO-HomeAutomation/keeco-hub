@@ -42,7 +42,7 @@
     "prettier": "^1.18.2"
   },
   "dependencies": {
-    "aedes": "^0.39.0",
+    "aedes": "^0.42.1",
     "apollo-server": "^2.14.2",
     "chalk": "^2.4.2",
     "dnssd": "^0.4.1",
